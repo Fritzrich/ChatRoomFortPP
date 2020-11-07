@@ -1,5 +1,30 @@
+import java.net.*;
+//import java.io.*;
+
 public class Server{
+
+    private int port;
     public static void main(String[] args) {
-        System.out.println("Hallo ich bin Friedrich Tydecks Hallo dieser text ist unnötig lang");
+        Server server = new Server(1234);
+        server.startListening();
+    }
+
+    public Server(int port){
+        this.port = port;
+    }
+
+    public void startListening() {
+        try {
+            //verbinden mit Client
+            ServerSocket serverSocket = new ServerSocket(port);
+            Socket clientSocket = serverSocket.accept();
+            System.out.println("Client verbunden");
+
+            clientSocket.close();
+            serverSocket.close();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        
     }
 }
