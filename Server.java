@@ -1,12 +1,16 @@
 import java.net.*;
+import java.util.ArrayList;
 import java.io.*;
 
 public class Server{
 
     private int port;
+    ArrayList<MulServerThread> connections = new ArrayList<MulServerThread>();
+    LoginManager loginManager = new LoginManager();
+    boolean shouldRun = true;
+
     public static void main(String[] args) {
         Server server = new Server(1234);
-        LoginManager loginManager = new LoginManager();
         server.startListening();
     }
 
@@ -16,13 +20,15 @@ public class Server{
 
     public void startListening() {
         try {
-            //verbinden mit Client
             ServerSocket serverSocket = new ServerSocket(port);
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Client verbunden");
-
-            clientSocket.close();
-            serverSocket.close();
+            while(shouldRun){
+                //verbinden mit Client und zuweisung zu Thread
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client verbunden");
+                MulServerThread mst = new MulServerThread(clientSocket, this);
+                mst.start();        //Thread starten
+                connections.add(mst);
+            }
         } catch(Exception e){
             e.printStackTrace();
         }
