@@ -1,30 +1,56 @@
+
+import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 //import java.io.*;
+import java.util.Scanner;
 
 public class Client {
 
-    private String host;
-    private int port;
+    Socket socket;
+    ClientConnection cc;
+    boolean shouldRun = true;
 
     public static void main(String[] args){
-        Client client = new Client("localhost", 1234);
-        client.connect();
+        new Client("localhost", 1234);
     }
 
     public Client(String host, int port){
-        this.host = host;
-        this.port = port;
+        try{
+            socket = new Socket(host, port);
+            cc = new ClientConnection(socket, this);
+            cc.start();
+        } catch(UnknownHostException e){
+            e.printStackTrace();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
-    public void connect(){
-        try{
-            Socket socket = new Socket(host, port);
+    public void listenForInput(){
+        Scanner scanner = new Scanner(System.in);
+        while(shouldRun) {
+            while(!scanner.hasNextLine()){
+                try{
+                    Thread.sleep(1);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+            String input = scanner.nextLine();
+            cc.sendMessageToServer(input);
+        }
+        scanner.close();
+    }
 
+    /*public void connect(){
+        try{
+            socket = new Socket(host, port);
             socket.close();
         } catch (Exception e){
             e.printStackTrace();
         }
        
         
-    }
+    }*/
 }

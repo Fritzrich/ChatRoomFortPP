@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
 
 public class MulServerThread extends Thread {
 
@@ -27,7 +26,7 @@ public class MulServerThread extends Thread {
      * } } }
      */
 
-    public void sendStringToClient(String message) {
+    public void sendMessageToClient(String message) {
         try{
             dout.writeUTF(message);
             dout.flush();
@@ -37,10 +36,14 @@ public class MulServerThread extends Thread {
         
     }
 
-    public void sendStringToAllClients(String message) {
+    public void sendMessageToAllClients(String message) {
         for (MulServerThread thread : server.connections){
-            thread.sendStringToClient(message);
+            thread.sendMessageToClient(message);
         }
+    }
+
+    public void handleCommand(String textIn){
+
     }
 
     public void run() {
@@ -56,7 +59,10 @@ public class MulServerThread extends Thread {
                     }
                 }
             String textIn = din.readUTF();
-            sendStringToAllClients(textIn);
+            if(textIn.startsWith("/")){            //Filtere Kommando-Anfragen
+                handleCommand(textIn);
+            }
+            else sendMessageToAllClients(textIn);
             }
             din.close();
             dout.close();

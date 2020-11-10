@@ -1,6 +1,5 @@
 import java.net.*;
 import java.util.ArrayList;
-import java.io.*;
 
 public class Server{
 
@@ -29,6 +28,7 @@ public class Server{
                 mst.start();        //Thread starten
                 connections.add(mst);
             }
+            serverSocket.close();
         } catch(Exception e){
             e.printStackTrace();
         }
