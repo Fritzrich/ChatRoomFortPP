@@ -10,7 +10,7 @@ public class OutputThread extends Thread {
 	Client client;
 	Socket socket;
 	BufferedWriter writer;
-	boolean shouldRun;
+	boolean shouldRun = true;
 
 	public OutputThread(Socket socket, Client client) {
 			this.socket = socket;
