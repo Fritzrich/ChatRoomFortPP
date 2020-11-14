@@ -1,25 +1,42 @@
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
-public class Server{
+public class Server extends Thread{
 
     private int port;
     ArrayList<ServerThread> connections = new ArrayList<ServerThread>();
     ArrayList<User> allUsers = new ArrayList<User>();
     boolean shouldRun = true;
+    ServerSocket serverSocket;
 
     public static void main(String[] args) {
         Server server = new Server(8000);
+        server.start();
         server.startListening();
     }
 
     public Server(int port){
         this.port = port;
     }
-
+    
+    public void run() { //zum manuellen Schließen (type ".quit" in Console)
+    	Scanner scanner = new Scanner(System.in);
+    	while(shouldRun) {
+    		String command = scanner.nextLine();
+    		if(command.equals(".quit")) {
+    			for (ServerThread serverThread : connections) {
+    				serverThread.serverShutdown();
+    			}
+    			shouldRun = false;
+				scanner.close();
+    		}
+    	}
+    }
+    
     public void startListening() {
         try {
-            ServerSocket serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(port);
             while(shouldRun){
                 //verbinden mit Client und zuweisung zu Thread
                 Socket clientSocket = serverSocket.accept();
@@ -29,12 +46,13 @@ public class Server{
                 connections.add(st);
             }
             serverSocket.close();
+            return;
         } catch(Exception e){
             e.printStackTrace();
         }
     }
     
-    //Account-bezogene Methoden
+    //Account-Management
     
     void addUser(String username, String password){
         User user = new User(username, password);
@@ -49,6 +67,14 @@ public class Server{
             }
         }
     return false;
+    }
+    
+    void setUserOffline(String username) {
+    	for(User user : allUsers){
+            if(user.getUsername().equals(username)){
+                user.logOff();
+            }
+        }
     }
 
     public boolean checkPassword(String username, String password){
@@ -72,9 +98,9 @@ public class Server{
         }
     }
 
-    public void changeUsername(String oldUsername, String password, String newUsername){
+    public void changeUsername(String oldUsername, String newUsername){
         for(User user : allUsers){
-            if(user.getUsername().equals(oldUsername) && user.getPassword().equals(password)){
+            if(user.getUsername().equals(oldUsername)){
                user.setUsername(newUsername);
             }
         }

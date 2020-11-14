@@ -16,26 +16,40 @@ public class ServerThread extends Thread {
     }
 
     public void sendMessageToClient(String message) {
-		writer.println(message);
-		writer.flush();
+    		writer.println(message);
+    		writer.flush();
     }
     
     public void sendMessageExcept(String message, ServerThread thread) {
     	for(ServerThread serverThread : server.connections) {
     		if(!(thread.equals(serverThread))) {
-    			sendMessageToClient(message);
+    			if(server.userIsOnline(serverThread.username)) {
+    				serverThread.sendMessageToClient(message);
+    			}
     		}
     	}
     }
     
     public void sendMessageToAllClients(String message) {
-        for (ServerThread thread : server.connections){
-            thread.sendMessageToClient(message);
+        for (ServerThread serverThread : server.connections){
+        	if(server.userIsOnline(serverThread.username)) {
+        		serverThread.sendMessageToClient(message);
+        	}
         }
     }
+    
+    public void serverShutdown() {
+    	sendMessageToAllClients("[Server]: Der Server wird heruntergefahren!\nGood Bye!");
+    	sendMessageToAllClients("[Server]: Sie werden ausgeloggt!");
+    	shouldRun = false;
+    }
 
-    public void handleCommand(String message){
-    	if(message.equals(".quit")) sendMessageToClient("[Server]: Sie werden ausgeloggt!");	//Verbindung trennen
+    public void handleCommand(String message){													//Verbindung trennen
+    	if(message.equals(".quit")) {
+    		sendMessageToClient("[Server]: Sie werden ausgeloggt!");
+    		server.setUserOffline(username);
+			shouldRun = false;
+    	}
     	else if(message.equals(".changePassword")) {											//Passwort ändern
     			sendMessageToClient("[Server]: Geben Sie ein neues Passwort ein: ");
     			String newPassword = "";
@@ -45,6 +59,18 @@ public class ServerThread extends Thread {
 					e.printStackTrace();
 				}
     			server.changePassword(username, newPassword);
+    			sendMessageToClient("[Server]: Sie haben ihr Passwort geändert!");
+    	} else if(message.equals(".changeUsername")) {											//Benutzernamen ändern
+    		sendMessageToClient("[Server]: Geben Sie einen neuen Benutzernamen ein: ");
+			String newUsername = "";
+			try {
+				newUsername = reader.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			server.changeUsername(username, newUsername);
+			username = newUsername;
+			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geändert!");
     	}
     }
 
@@ -54,15 +80,17 @@ public class ServerThread extends Thread {
 			writer = new PrintWriter(client.getOutputStream());
 			// Login-Start
 			String tempUsername = reader.readLine();
-			if (server.searchUser(tempUsername) == true) { // User existiert
-				while (server.userIsOnline(tempUsername) == false) {
+			if (server.searchUser(tempUsername) == true) {//User existiert
+				boolean loginIsDone = false;
+				while (loginIsDone == false) {
 					sendMessageToClient("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ");
 					String password = reader.readLine();
 					if (server.checkPassword(tempUsername, password) == true) {
 						sendMessageToClient("[Server]: Sie sind eingeloggt!");
+						loginIsDone = true;
 					}
 				}
-			} else { // User existiert nicht
+			} else { //User existiert nicht
 				sendMessageToClient("[Server]: Geben Sie ein Passwort ein: ");
 				String password = reader.readLine();
 				server.addUser(tempUsername, password);
@@ -72,6 +100,7 @@ public class ServerThread extends Thread {
 			sendMessageToClient("[Server]: Es sind " + server.getOnlineUsers() + " online!");
 			sendMessageExcept("[Server]: " + username + " hat sich gerade eingeloggt!", this);
 			// Login-Ende
+			//Nachrichtendienst
 			while (shouldRun) {
 				while (client.getInputStream().available() == 0) {
 					try {
@@ -81,8 +110,8 @@ public class ServerThread extends Thread {
 					}
 				}
 				String message = reader.readLine();
-				String finalMessage = "[" + username + "]" + message;
-				if(message.startsWith(".")){ //Filtere Kommando-Anfragen
+				String finalMessage = "[" + username + "]: " + message;
+				if(message.startsWith(".")){ 									//Filtere Kommando-Anfragen
 					handleCommand(message);
 				} else {
 					sendMessageExcept(finalMessage, this);
@@ -92,7 +121,6 @@ public class ServerThread extends Thread {
 				reader.close();
 				writer.close();
 				client.close();
-				shouldRun = false;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

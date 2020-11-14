@@ -9,13 +9,14 @@ public class Client {
     boolean isLoggedIn = false;
     User user;
     boolean nameIsTaken = false;
+    String username;
    
     public static void main(String[] args){
         new Client("localhost", 8000);
     }
 
     public Client(String host, int port){
-        try{
+    	try{
             socket = new Socket(host, port);
             System.out.println("Mit Server verbunden");
             new OutputThread(socket, this).start();
@@ -28,7 +29,7 @@ public class Client {
     }
     
     public void setUsername(String username) {
-    	User user = new User(username);
+    	this.username = username;
     }
     
     public String getUsername() {

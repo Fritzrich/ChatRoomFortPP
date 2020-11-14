@@ -37,7 +37,7 @@ public class InputThread extends Thread	{
 				}
 				//Command Responses
 				if(message.equals("[Server]: Sie werden ausgeloggt!")) {
-					client.isLoggedIn = true;
+					shouldRun = false;
 				}
 			} catch(IOException e) {
 				e.printStackTrace();

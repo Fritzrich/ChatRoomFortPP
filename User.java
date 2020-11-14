@@ -28,4 +28,8 @@ public class User {
     String getPassword(){
         return password;
     }
+    
+    void logOff() {
+    	isLoggedIn = false;
+    }
 }

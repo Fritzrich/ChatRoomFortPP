@@ -47,6 +47,7 @@ public class OutputThread extends Thread {
 					message = scanner.nextLine();
 					writer.println(message);
 					writer.flush();
+					if(message.equals(".quit")) shouldRun = false;
 			}
 			try {
 				socket.close();
