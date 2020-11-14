@@ -4,8 +4,8 @@ import java.util.ArrayList;
 public class Server{
 
     private int port;
-    ArrayList<MulServerThread> connections = new ArrayList<MulServerThread>();
-    private ArrayList<User> allUsers = new ArrayList<User>();
+    ArrayList<ServerThread> connections = new ArrayList<ServerThread>();
+    ArrayList<User> allUsers = new ArrayList<User>();
     boolean shouldRun = true;
 
     public static void main(String[] args) {
@@ -24,9 +24,9 @@ public class Server{
                 //verbinden mit Client und zuweisung zu Thread
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client verbunden");
-                MulServerThread mst = new MulServerThread(clientSocket, this);
-                mst.start();        //Thread starten
-                connections.add(mst);
+                ServerThread st = new ServerThread(clientSocket, this);
+                st.start();        //Thread starten
+                connections.add(st);
             }
             serverSocket.close();
         } catch(Exception e){
@@ -64,9 +64,9 @@ public class Server{
         return false;
     }
 
-    public void changePassword(String username, String oldPassword, String newPassword){
+    public void changePassword(String username, String newPassword){
         for(User user : allUsers){
-            if(user.getUsername().equals(username) && user.getPassword().equals(oldPassword)){
+            if(user.getUsername().equals(username) ){
                user.setPassword(newPassword);
             }
         }

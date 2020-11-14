@@ -2,14 +2,13 @@
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-//import java.io.*;
 
 public class Client {
 
     Socket socket;
     boolean isLoggedIn = false;
     User user;
-    boolean nameIsTaken;
+    boolean nameIsTaken = false;
    
     public static void main(String[] args){
         new Client("localhost", 8000);

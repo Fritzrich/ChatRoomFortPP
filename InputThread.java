@@ -29,14 +29,17 @@ public class InputThread extends Thread	{
 				String message = reader.readLine();
 				System.out.println(message);
 				//Login Maßnahmen
-				if(message.equals("\n[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ")) {
+				if(message.equals("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ")) {
 					client.nameIsTaken = true;
 				}
-				if(message.equals("\n[Server]: Sie sind eingeloggt!")) {
+				if(message.equals("[Server]: Sie sind eingeloggt!")) {
+					client.isLoggedIn = true;
+				}
+				//Command Responses
+				if(message.equals("[Server]: Sie werden ausgeloggt!")) {
 					client.isLoggedIn = true;
 				}
 			} catch(IOException e) {
-				System.out.println("HIER liegt der Fehler INPUT");
 				e.printStackTrace();
 				shouldRun = false;
 			}
