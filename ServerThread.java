@@ -44,8 +44,11 @@ public class ServerThread extends Thread {
     	shouldRun = false;
     }
 
-    public void handleCommand(String message){													//Verbindung trennen
-    	if(message.equals(".quit")) {
+    public void handleCommand(String message){	
+    	if(message.equals(".help")) {															//Commands anzeigen lassen
+    		sendMessageToClient(".quit - Sie werden ausgeloggt\n.changePassword - Ändern Sie ihr Passwort\n.changeUsername - Ändern Sie ihren Benutzernamen");
+    	}
+    	if(message.equals(".quit")) {															//Verbindung trennen
     		sendMessageToClient("[Server]: Sie werden ausgeloggt!");
     		server.setUserOffline(username);
 			shouldRun = false;
@@ -79,6 +82,7 @@ public class ServerThread extends Thread {
 			reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			writer = new PrintWriter(client.getOutputStream());
 			// Login-Start
+			sendMessageToClient("[Server]: Geben Sie ihren Benutzernamen ein:");
 			String tempUsername = reader.readLine();
 			if (server.searchUser(tempUsername) == true) {//User existiert
 				boolean loginIsDone = false;

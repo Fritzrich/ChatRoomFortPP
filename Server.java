@@ -38,7 +38,7 @@ public class Server extends Thread{
         try {
             serverSocket = new ServerSocket(port);
             while(shouldRun){
-                //verbinden mit Client und zuweisung zu Thread
+                //verbinden mit Client und Zuweisung zu Thread
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client verbunden");
                 ServerThread st = new ServerThread(clientSocket, this);

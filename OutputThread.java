@@ -25,7 +25,6 @@ public class OutputThread extends Thread {
 			e.printStackTrace();
 		} 
 			//Login-Start
-			System.out.println("\nGeben Sie ihren Benutzernamen ein: ");
 			String username = scanner.nextLine();
 			client.setUsername(username);
 			writer.println(username);
