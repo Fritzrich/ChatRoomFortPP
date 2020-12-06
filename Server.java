@@ -9,9 +9,11 @@ public class Server extends Thread{
     ArrayList<User> allUsers = new ArrayList<User>();
     boolean shouldRun = true;
     ServerSocket serverSocket;
+    ArrayList<Room> allRooms = new ArrayList<Room>();
 
     public static void main(String[] args) {
         Server server = new Server(8000);
+        server.allRooms.add(new Room("public", server));
         server.start();
         server.startListening();
     }
@@ -52,7 +54,33 @@ public class Server extends Thread{
         }
     }
     
+    //Room-Management
+    
+    
+    
+    void addUserToRoom(Room room, String username) {
+    	room.addUser(getUser(username));
+    }
+    
+    Room getRoom(String roomName) {
+    	for(Room room : allRooms){
+            if(room.getRoomName().equals(roomName)){
+                return room;
+            }
+        }
+    	return null;
+    }
+    
     //Account-Management
+    
+    User getUser(String username) {
+    	for(User user : allUsers){
+            if(user.getUsername().equals(username)){
+                return user;
+            }
+        }
+    	return null;
+    }
     
     void addUser(String username, String password){
         User user = new User(username, password);
@@ -66,7 +94,15 @@ public class Server extends Thread{
                 return true;
             }
         }
-    return false;
+        return false;
+    }
+    
+    void setUserOnline(String username) {
+    	for(User user : allUsers){
+            if(user.getUsername().equals(username)){
+                user.logIn();
+            }
+        }
     }
     
     void setUserOffline(String username) {

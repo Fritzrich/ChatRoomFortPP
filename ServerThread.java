@@ -9,6 +9,7 @@ public class ServerThread extends Thread {
     BufferedReader reader;
     boolean shouldRun = true;
     String username;
+    Room room;
     
     public ServerThread(Socket client, Server server) {
         this.client = client;
@@ -21,8 +22,9 @@ public class ServerThread extends Thread {
     }
     
     public void sendMessageExcept(String message, ServerThread thread) {
+    	
     	for(ServerThread serverThread : server.connections) {
-    		if(!(thread.equals(serverThread))) {
+    		if(!(thread.equals(serverThread)) && serverThread.room.equals(room)) {
     			if(server.userIsOnline(serverThread.username)) {
     				serverThread.sendMessageToClient(message);
     			}
@@ -52,8 +54,7 @@ public class ServerThread extends Thread {
     		sendMessageToClient("[Server]: Sie werden ausgeloggt!");
     		server.setUserOffline(username);
 			shouldRun = false;
-    	}
-    	else if(message.equals(".changePassword")) {											//Passwort ändern
+    	} else if(message.equals(".changePassword")) {											//Passwort ändern
     			sendMessageToClient("[Server]: Geben Sie ein neues Passwort ein: ");
     			String newPassword = "";
     			try {
@@ -74,6 +75,16 @@ public class ServerThread extends Thread {
 			server.changeUsername(username, newUsername);
 			username = newUsername;
 			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geändert!");
+    	} else if(message.startsWith(".createRoom")) {											//Kreiert Raum
+    		message = message.substring(11, message.length());
+    		System.out.println(message);
+    		server.allRooms.add(new Room(message, server));
+    		sendMessageToClient("Neue Raum"+ message);
+    	} else if(message.startsWith(".changeRoomTo")) {										//Raum wechseln
+    		message = message.substring(13, message.length());
+    		server.addUserToRoom(server.getRoom(message), username);
+    		room = server.getRoom(message);
+    		sendMessageToClient("Raum gewechselt zu"+ message);
     	}
     }
 
@@ -101,9 +112,11 @@ public class ServerThread extends Thread {
 				sendMessageToClient("[Server]: Sie sind eingeloggt!");
 			}
 			username = tempUsername;
+			// Login-Ende
+			server.addUserToRoom(server.getRoom("public"), username);
+			room = server.getRoom("public");
 			sendMessageToClient("[Server]: Es sind " + server.getOnlineUsers() + " online!");
 			sendMessageExcept("[Server]: " + username + " hat sich gerade eingeloggt!", this);
-			// Login-Ende
 			//Nachrichtendienst
 			while (shouldRun) {
 				while (client.getInputStream().available() == 0) {
@@ -134,4 +147,3 @@ public class ServerThread extends Thread {
 		}
     }
 }
-
