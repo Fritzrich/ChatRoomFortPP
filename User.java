@@ -29,6 +29,10 @@ public class User {
         return password;
     }
     
+    void logIn() {
+    	isLoggedIn = true;
+    }
+    
     void logOff() {
     	isLoggedIn = false;
     }
