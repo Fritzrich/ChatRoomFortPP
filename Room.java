@@ -15,6 +15,10 @@ public class Room {
 		return name;
 	}
 	
+	public void setRoomName(String name) {
+		this.name = name;
+	}
+	
 	public void	addUser(User newUser) {
 		userInRoom.add(newUser);
 	}

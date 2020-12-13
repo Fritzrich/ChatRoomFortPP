@@ -22,13 +22,13 @@ public class InputThread extends Thread	{
 			}
 	}
 	
-	//Empf√§ngt, gibt Nachrichten aus und bearbeitet falls n√∂tig
+	//Empf‰ngt, gibt Nachrichten aus und bearbeitet falls nˆtig
 	public void run() {
 		while(shouldRun) {
 			try {
 				String message = reader.readLine();
 				System.out.println(message);
-				//Login Ma√ünahmen
+				//Login Maﬂnahmen
 				if(message.equals("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ")) {
 					client.nameIsTaken = true;
 				}
@@ -37,7 +37,7 @@ public class InputThread extends Thread	{
 				}
 				//Command Responses
 				if(message.equals("[Server]: Sie werden ausgeloggt!")) {
-					shouldRun = false;
+					client.quit();
 				}
 			} catch(IOException e) {
 				e.printStackTrace();
@@ -47,7 +47,6 @@ public class InputThread extends Thread	{
 		try {
 			socket.close();
 			reader.close();
-			shouldRun = false;
 		} catch(IOException e) {
 			e.printStackTrace();
 		}

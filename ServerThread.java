@@ -17,12 +17,11 @@ public class ServerThread extends Thread {
     }
 
     public void sendMessageToClient(String message) {
-    		writer.println(message);
-    		writer.flush();
+    	writer.println(message);
+    	writer.flush();
     }
     
     public void sendMessageExcept(String message, ServerThread thread) {
-    	
     	for(ServerThread serverThread : server.connections) {
     		if(!(thread.equals(serverThread)) && serverThread.room.equals(room)) {
     			if(server.userIsOnline(serverThread.username)) {
@@ -48,13 +47,13 @@ public class ServerThread extends Thread {
 
     public void handleCommand(String message){	
     	if(message.equals(".help")) {															//Commands anzeigen lassen
-    		sendMessageToClient(".quit - Sie werden ausgeloggt\n.changePassword - Ã„ndern Sie ihr Passwort\n.changeUsername - Ã„ndern Sie ihren Benutzernamen");
+    		sendMessageToClient(".quit - Sie werden ausgeloggt\n.changePassword - Ändern Sie ihr Passwort\n.changeUsername - Ändern Sie ihren Benutzernamen");
     	}
     	if(message.equals(".quit")) {															//Verbindung trennen
     		sendMessageToClient("[Server]: Sie werden ausgeloggt!");
     		server.setUserOffline(username);
 			shouldRun = false;
-    	} else if(message.equals(".changePassword")) {											//Passwort Ã¤ndern
+    	} else if(message.equals(".changePassword")) {											//Passwort ändern
     			sendMessageToClient("[Server]: Geben Sie ein neues Passwort ein: ");
     			String newPassword = "";
     			try {
@@ -63,8 +62,8 @@ public class ServerThread extends Thread {
 					e.printStackTrace();
 				}
     			server.changePassword(username, newPassword);
-    			sendMessageToClient("[Server]: Sie haben ihr Passwort geÃ¤ndert!");
-    	} else if(message.equals(".changeUsername")) {											//Benutzernamen Ã¤ndern
+    			sendMessageToClient("[Server]: Sie haben ihr Passwort geändert!");
+    	} else if(message.equals(".changeUsername")) {											//Benutzernamen ändern
     		sendMessageToClient("[Server]: Geben Sie einen neuen Benutzernamen ein: ");
 			String newUsername = "";
 			try {
@@ -74,17 +73,23 @@ public class ServerThread extends Thread {
 			}
 			server.changeUsername(username, newUsername);
 			username = newUsername;
-			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geÃ¤ndert!");
+			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geändert!");
     	} else if(message.startsWith(".createRoom")) {											//Kreiert Raum
     		message = message.substring(11, message.length());
-    		System.out.println(message);
     		server.allRooms.add(new Room(message, server));
     		sendMessageToClient("Neue Raum"+ message);
+    		server.log("[Server]: Raum " + message + " wurde erstellt!");
     	} else if(message.startsWith(".changeRoomTo")) {										//Raum wechseln
     		message = message.substring(13, message.length());
     		server.addUserToRoom(server.getRoom(message), username);
     		room = server.getRoom(message);
     		sendMessageToClient("Raum gewechselt zu"+ message);
+    	} else if(message.startsWith(".changeRoomName")){										//Raumnamen ändern
+    		message = message.substring(15, message.length());
+    		server.changeRoomName(room, message);
+    	} else if(message.startsWith(".deleteRoom")) {											//Raum löschen
+    		message = message.substring(11, message.length());
+			server.deleteRoom(message);
     	}
     }
 
@@ -92,6 +97,7 @@ public class ServerThread extends Thread {
         try {
 			reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			writer = new PrintWriter(client.getOutputStream());
+			room = server.getRoom("public");
 			// Login-Start
 			sendMessageToClient("[Server]: Geben Sie ihren Benutzernamen ein:");
 			String tempUsername = reader.readLine();
@@ -114,7 +120,6 @@ public class ServerThread extends Thread {
 			username = tempUsername;
 			// Login-Ende
 			server.addUserToRoom(server.getRoom("public"), username);
-			room = server.getRoom("public");
 			sendMessageToClient("[Server]: Es sind " + server.getOnlineUsers() + " online!");
 			sendMessageExcept("[Server]: " + username + " hat sich gerade eingeloggt!", this);
 			//Nachrichtendienst
@@ -128,6 +133,7 @@ public class ServerThread extends Thread {
 				}
 				String message = reader.readLine();
 				String finalMessage = "[" + username + "]: " + message;
+				server.log("[" + room.getRoomName() + "] " + finalMessage);
 				if(message.startsWith(".")){ 									//Filtere Kommando-Anfragen
 					handleCommand(message);
 				} else {
