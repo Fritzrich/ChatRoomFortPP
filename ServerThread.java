@@ -50,9 +50,7 @@ public class ServerThread extends Thread {
     		sendMessageToClient(".quit - Sie werden ausgeloggt\n.changePassword - Ändern Sie ihr Passwort\n.changeUsername - Ändern Sie ihren Benutzernamen");
     	}
     	if(message.equals(".quit")) {															//Verbindung trennen
-    		sendMessageToClient("[Server]: Sie werden ausgeloggt!");
-    		server.setUserOffline(username);
-			shouldRun = false;
+    		quit();
     	} else if(message.equals(".changePassword")) {											//Passwort ändern
     			sendMessageToClient("[Server]: Geben Sie ein neues Passwort ein: ");
     			String newPassword = "";
@@ -92,30 +90,47 @@ public class ServerThread extends Thread {
 			server.deleteRoom(message);
     	}
     }
+    
+    public void quit() {
+    	sendMessageToClient("[Server]: Sie werden ausgeloggt!");
+		server.setUserOffline(username);
+		shouldRun = false;
+    }
 
     public void run() {
         try {
 			reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			writer = new PrintWriter(client.getOutputStream());
 			room = server.getRoom("public");
+			boolean loginIsDone  = false;
+			String tempUsername = "";
 			// Login-Start
-			sendMessageToClient("[Server]: Geben Sie ihren Benutzernamen ein:");
-			String tempUsername = reader.readLine();
-			if (server.searchUser(tempUsername) == true) {//User existiert
-				boolean loginIsDone = false;
-				while (loginIsDone == false) {
-					sendMessageToClient("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ");
-					String password = reader.readLine();
-					if (server.checkPassword(tempUsername, password) == true) {
-						sendMessageToClient("[Server]: Sie sind eingeloggt!");
-						loginIsDone = true;
-					}
+			while(!loginIsDone) {
+				sendMessageToClient("[Server]: Geben Sie ihren Benutzernamen ein:");
+				tempUsername = reader.readLine();
+				String password;
+				if(server.searchUser(tempUsername) == true && server.getUser(tempUsername).isBanned == true) {
+					sendMessageToClient("[Server]: Der Nutzer " + tempUsername + " ist gebannt!");
 				}
-			} else { //User existiert nicht
-				sendMessageToClient("[Server]: Geben Sie ein Passwort ein: ");
-				String password = reader.readLine();
-				server.addUser(tempUsername, password);
-				sendMessageToClient("[Server]: Sie sind eingeloggt!");
+				else if (server.searchUser(tempUsername) == true) {			//User existiert
+					boolean passwordIsDone = false;
+					while (passwordIsDone == false) {
+						sendMessageToClient("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ");
+						password = reader.readLine();
+						if (server.checkPassword(tempUsername, password) == true) {
+							sendMessageToClient("[Server]: Sie sind eingeloggt!");
+							passwordIsDone = true;
+						}
+					}
+					loginIsDone = true;
+				} else {								//User existiert nicht
+					sendMessageToClient("[Server]: Geben Sie ein Passwort ein: ");
+					password = reader.readLine();
+					server.addUser(tempUsername, password);
+					server.registerToFile(tempUsername, password);
+					sendMessageToClient("[Server]: Sie sind eingeloggt!");
+					loginIsDone = true;
+				}
 			}
 			username = tempUsername;
 			// Login-Ende
@@ -144,6 +159,7 @@ public class ServerThread extends Thread {
 				reader.close();
 				writer.close();
 				client.close();
+				server.connections.remove(this);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

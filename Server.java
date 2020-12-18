@@ -1,6 +1,9 @@
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.*;
@@ -18,14 +21,16 @@ public class Server extends Thread{
     ServerSocket serverSocket;
     ArrayList<Room> allRooms = new ArrayList<Room>();
     File file = new File("Serverlog.txt");
+    File fileUserData = new File("ServerUserData.txt");
 
     public static void main(String[] args) {
         Server server = new Server(8000);
         server.allRooms.add(new Room("public", server));
+        server.readUserFile();
         server.start();
         server.startListening();
     }
-
+    
     public Server(int port){
         this.port = port;
     }
@@ -37,6 +42,37 @@ public class Server extends Thread{
     		handleCommand(command);
     	}
     	scanner.close();
+    }
+    
+    public void readUserFile() {
+    	String line;
+		try {
+			BufferedReader readbuffer = new BufferedReader( new FileReader("ServerUserData.txt"));
+			line = readbuffer.readLine();
+			while(line != null){
+				String username = line;
+				line = readbuffer.readLine();
+				String password = line;
+				line = readbuffer.readLine();
+				boolean IsBanned = Boolean.parseBoolean(line);
+				User newUser = new User(username, password , IsBanned);
+				allUsers.add(newUser);
+				line = readbuffer.readLine();
+			}
+			readbuffer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public void registerToFile(String username, String password) {
+    	try {
+    		BufferedWriter writer = new BufferedWriter(new FileWriter(fileUserData, true));
+    		writer.write(username + "\n" + password + "\n" + "false\n");
+    		writer.close();
+    	} catch(IOException e) {
+    		e.printStackTrace();
+    	}
     }
     
     public void log(String data) {
@@ -66,6 +102,8 @@ public class Server extends Thread{
 					st.sendMessageToClient("[Server]: Sie werden gekickt!");
 					st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
 					log("[Server]: User " + command + " wurde gekickt!");
+					setUserOffline(command);
+					st.quit();
 				}
 			}
 		} else if(command.startsWith(".warnUser")) {
@@ -83,10 +121,18 @@ public class Server extends Thread{
 					st.room.userInRoom.remove(getUser(command));
 					st.sendMessageToClient("[Server]: Sie werden gebannt!");
 					st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
-					allUsers.remove(getUser(command));
+					getUser(command).ban();
 					log("[Server]: User " + command + " wurde gebannt!");
+					setUserOffline(command);
+					st.quit();
 				}
 			}
+			updateServerUserData();
+		} else if (command.startsWith(".pardon")) {
+			command = command.substring(7, command.length());
+			getUser(command).pardon();
+			log("[Server]: User " + command + " wurde entbannt!");
+			updateServerUserData();
 		} else if (command.startsWith(".createRoom")) { 				// Kreiert Raum
 			command = command.substring(11, command.length());
 			allRooms.add(new Room(command, this));
@@ -98,7 +144,22 @@ public class Server extends Thread{
 			command = command.substring(11, command.length());
 			deleteRoom(command);
 		}
-
+    }
+    
+    public void updateServerUserData() {
+    	try {
+			FileWriter fw = new FileWriter("serverUserData.txt");
+			String updatedText = "";
+			for(User user : allUsers) {
+				updatedText += user.getUsername() + "\n" + user.getPassword() + "\n" + Boolean.toString(user.isBanned) + "\n";
+			}
+			fw.write(updatedText);
+			fw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     public void startListening() {
