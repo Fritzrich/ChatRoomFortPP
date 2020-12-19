@@ -116,15 +116,22 @@ public class Server extends Thread{
 			} 
 		} else if(command.startsWith(".banUser")) {
 			command = command.substring(8, command.length());
-			for(ServerThread st : connections) {
-				if(st.username.equals(command)) {
-					st.room.userInRoom.remove(getUser(command));
-					st.sendMessageToClient("[Server]: Sie werden gebannt!");
-					st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
+			for(User user : allUsers) {
+				if(user.getUsername().equals(command)) {
 					getUser(command).ban();
 					log("[Server]: User " + command + " wurde gebannt!");
-					setUserOffline(command);
-					st.quit();
+					if(user.isLoggedIn) {
+						for(ServerThread st : connections) {
+							if(st.username.equals(command)) {
+								st.room.userInRoom.remove(getUser(command));
+								st.sendMessageToClient("[Server]: Sie werden gebannt!");
+								st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
+								getUser(command).ban();
+								setUserOffline(command);
+								st.quit();
+							}
+						}
+					}
 				}
 			}
 			updateServerUserData();
