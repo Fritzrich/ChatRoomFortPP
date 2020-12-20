@@ -25,6 +25,7 @@ public class Client {
             in = new InputThread(socket, this);
             out.start();
             in.start();
+            ClientGUI UI = new ClientGUI(this);
         } catch(UnknownHostException e){
             e.printStackTrace();
         } catch(IOException e){
@@ -44,7 +45,8 @@ public class Client {
     	try {
     		out.shouldRun = false;
     		in.shouldRun = false;
-			socket.close();
+            socket.close();
+            System.exit(0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
