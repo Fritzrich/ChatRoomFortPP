@@ -47,11 +47,11 @@ public class ServerThread extends Thread {
 
     public void handleCommand(String message){	
     	if(message.equals(".help")) {															//Commands anzeigen lassen
-    		sendMessageToClient(".quit - Sie werden ausgeloggt\n.changePassword - Ändern Sie ihr Passwort\n.changeUsername - Ändern Sie ihren Benutzernamen");
+    		sendMessageToClient(".quit - Sie werden ausgeloggt\n.changePassword - ï¿½ndern Sie ihr Passwort\n.changeUsername - ï¿½ndern Sie ihren Benutzernamen");
     	}
     	if(message.equals(".quit")) {															//Verbindung trennen
     		quit();
-    	} else if(message.equals(".changePassword")) {											//Passwort ändern
+    	} else if(message.equals(".changePassword")) {											//Passwort ï¿½ndern
     			sendMessageToClient("[Server]: Geben Sie ein neues Passwort ein: ");
     			String newPassword = "";
     			try {
@@ -60,8 +60,8 @@ public class ServerThread extends Thread {
 					e.printStackTrace();
 				}
     			server.changePassword(username, newPassword);
-    			sendMessageToClient("[Server]: Sie haben ihr Passwort geändert!");
-    	} else if(message.equals(".changeUsername")) {											//Benutzernamen ändern
+    			sendMessageToClient("[Server]: Sie haben ihr Passwort geï¿½ndert!");
+    	} else if(message.equals(".changeUsername")) {											//Benutzernamen ï¿½ndern
     		sendMessageToClient("[Server]: Geben Sie einen neuen Benutzernamen ein: ");
 			String newUsername = "";
 			try {
@@ -71,7 +71,7 @@ public class ServerThread extends Thread {
 			}
 			server.changeUsername(username, newUsername);
 			username = newUsername;
-			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geändert!");
+			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geï¿½ndert!");
     	} else if(message.startsWith(".createRoom")) {											//Kreiert Raum
     		message = message.substring(11, message.length());
     		server.allRooms.add(new Room(message, server));
@@ -82,10 +82,10 @@ public class ServerThread extends Thread {
     		server.addUserToRoom(server.getRoom(message), username);
     		room = server.getRoom(message);
     		sendMessageToClient("Raum gewechselt zu"+ message);
-    	} else if(message.startsWith(".changeRoomName")){										//Raumnamen ändern
+    	} else if(message.startsWith(".changeRoomName")){										//Raumnamen ï¿½ndern
     		message = message.substring(15, message.length());
     		server.changeRoomName(room, message);
-    	} else if(message.startsWith(".deleteRoom")) {											//Raum löschen
+    	} else if(message.startsWith(".deleteRoom")) {											//Raum lï¿½schen
     		message = message.substring(11, message.length());
 			server.deleteRoom(message);
     	}

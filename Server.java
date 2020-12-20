@@ -35,7 +35,7 @@ public class Server extends Thread{
         this.port = port;
     }
     
-    public void run() { //zum manuellen Schließen (type ".quit" in Console)
+    public void run() { //zum manuellen Schlieï¿½en (type ".quit" in Console)
     	Scanner scanner = new Scanner(System.in);
     	while(shouldRun) {
     		String command = scanner.nextLine();
@@ -144,10 +144,10 @@ public class Server extends Thread{
 			command = command.substring(11, command.length());
 			allRooms.add(new Room(command, this));
 			log("[Server]: Raum " + command + " wurde erstellt!");
-		} else if (command.startsWith(".changeRoomName")) { 			// Raumnamen ändern
+		} else if (command.startsWith(".changeRoomName")) { 			// Raumnamen ï¿½ndern
 			//command = command.substring(15, command.length());
 			//changeRoomName(room, command);
-		} else if (command.startsWith(".deleteRoom")) { 				// Raum löschen
+		} else if (command.startsWith(".deleteRoom")) { 				// Raum lï¿½schen
 			command = command.substring(11, command.length());
 			deleteRoom(command);
 		}
@@ -192,7 +192,7 @@ public class Server extends Thread{
     void changeRoomName(Room room, String roomName) {
     	for(Room temproom : allRooms){
             if(temproom.equals(room)){
-            	log("[Server]: Raum "+ room.getRoomName() +" geändert zu " + roomName +"!");
+            	log("[Server]: Raum "+ room.getRoomName() +" geï¿½ndert zu " + roomName +"!");
                 temproom.setRoomName(roomName);
             }
         }
@@ -212,7 +212,7 @@ public class Server extends Thread{
             	allRooms.remove(room);
             }
         }
-    	log("[Server]: Raum "+ roomName + " gelöscht!");
+    	log("[Server]: Raum "+ roomName + " gelï¿½scht!");
     }
     
     void addUserToRoom(Room room, String username) {
@@ -293,7 +293,7 @@ public class Server extends Thread{
                user.setPassword(newPassword);
             }
         }
-        log("[Server]: User " + username + " hat sein Passwort geändert!");
+        log("[Server]: User " + username + " hat sein Passwort geï¿½ndert!");
     }
 
     public void changeUsername(String oldUsername, String newUsername){
@@ -302,7 +302,7 @@ public class Server extends Thread{
                user.setUsername(newUsername);
             }
         }
-        log("[Server]: User " + oldUsername + " hat seinen Namen zu " + newUsername + " geändert");
+        log("[Server]: User " + oldUsername + " hat seinen Namen zu " + newUsername + " geï¿½ndert");
     }
     
     public boolean userIsOnline(String username) {
