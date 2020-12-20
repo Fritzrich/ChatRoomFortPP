@@ -109,12 +109,12 @@ public class ServerThread extends Thread {
 				sendMessageToClient("[Server]: Geben Sie ihren Benutzernamen ein:");
 				tempUsername = reader.readLine();
 				String password;
-				System.out.println(tempUsername);
 				if(server.searchUser(tempUsername) == true && server.getUser(tempUsername).isBanned == true) {
 					sendMessageToClient("[Server]: Der Nutzer " + tempUsername + " ist gebannt!");
 				}
 				else if (tempUsername.equals(".quit")) {
 					quit();
+					loginIsDone = true;
 				}
 				else if (server.searchUser(tempUsername) == true) {			//User existiert
 					boolean passwordIsDone = false;
