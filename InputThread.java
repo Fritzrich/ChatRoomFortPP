@@ -28,16 +28,30 @@ public class InputThread extends Thread	{
 			try {
 				String message = reader.readLine();
 				System.out.println(message);
+				
 				//Login Ma�nahmen
 				if(message.equals("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ")) {
 					client.nameIsTaken = true;
+					client.UI.postMessage(message);
 				}
-				if(message.equals("[Server]: Sie sind eingeloggt!")) {
+				else if(message.startsWith("[Server]: Sie sind eingeloggt als ")) {
+					client.username = message.substring(34, message.length());
 					client.isLoggedIn = true;
+					client.UI.setStatusUsername();
+					client.UI.postMessage(message);
 				}
 				//Command Responses
-				if(message.equals("[Server]: Sie werden ausgeloggt!")) {
+				else if(message.equals("[Server]: Sie werden ausgeloggt!")) {
 					client.quit();
+				}
+				else if(message.startsWith("[Server]: Es sind ")) {
+					client.UI.setUsers(message.split(" :: "));
+				}
+				else if(message.startsWith("[Server]: Raeume ")) {
+					client.UI.setRooms(message.split(" :: "));
+				}
+				else {
+					client.UI.postMessage(message);
 				}
 			} catch(IOException e) {
 				e.printStackTrace();

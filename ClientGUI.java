@@ -1,16 +1,23 @@
 import java.awt.*;
+import java.awt.event.*;
 
-public class ClientGUI {
+public class ClientGUI implements ActionListener{
 
     private Client client;
     private Frame UI;
-    private Panel p;
+    private Panel StatusPanel = new Panel();
+    private Panel ChatPanel = new Panel();
+    private Panel MessagePanel = new Panel();
+    private Panel RoomsPanel = new Panel();
 
-    private Button Send;
-    private List Chat;
-    private List Rooms;
-    private List Users;
-    private TextField Message;
+    private Label Username = new Label();
+    private Label Connection = new Label();
+    private Button ToggleLists = new Button("Zeige Räume");
+    private Button Send = new Button("Senden");
+    private List Chat = new List();
+    private List Rooms = new List();
+    private List Users = new List();
+    private TextField Message = new TextField(256);
     
     public ClientGUI (Client client) {
         this.client = client;
@@ -20,19 +27,99 @@ public class ClientGUI {
     }
 
     private void initComponents () {
+        StatusPanel.setLayout(new BorderLayout());
+        StatusPanel.add("North", Username);
+            Username.setText("Noch nicht angemeldet.");
+            Username.setAlignment(Label.CENTER);
+        StatusPanel.add("South", Connection);
+            Connection.setText("Mit keinem Server verbunden.");
+            Connection.setAlignment(Label.CENTER);
+
+        ChatPanel.setLayout(new BorderLayout(0, 20));
+        ChatPanel.add("Center", Chat);
+        ChatPanel.add("South", MessagePanel);
+            MessagePanel.setLayout(new BorderLayout(20, 0));
+            MessagePanel.add("Center", Message);
+            MessagePanel.add("East", Send);
+        
+        RoomsPanel.setLayout(new BorderLayout(0, 40));
+        RoomsPanel.add("North", ToggleLists);
+        RoomsPanel.add("Center", Users);
+
         UI = new Frame("Client-Chat");
+        UI.setLayout(new BorderLayout(40, 40));
+        UI.add("East", RoomsPanel);
+        UI.add("North", StatusPanel);
+        UI.add("Center", ChatPanel);
     
         UI.setSize(1000, 800);
         UI.setVisible(true);
     }
 
-    private void initListener () {
-        UI.addWindowListener( new java.awt.event.WindowAdapter() {
+    private void initListener() {
+
+        UI.addWindowFocusListener(new WindowAdapter() {
+           
+        });
+
+        UI.addWindowListener( new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent we) {
+            public void windowClosing(WindowEvent e) {
                 client.out.writer.println(".quit");
                 client.out.writer.flush();
             }
         } );
+
+        UI.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent we) {
+                Message.requestFocusInWindow();
+            }
+        });
+
+        Send.addActionListener(this);
+        Send.setActionCommand("send");
+
+        Message.addActionListener(this);
+    }
+
+    public void actionPerformed(ActionEvent ev) {
+        if ("send".equals(ev.getActionCommand())) {             //sende Texteingabe über OutputThread
+            client.out.sendMessage(Message.getText());
+            Chat.add(Message.getText());
+            Message.setText("");
+        }
+
+        if (ev.getSource() == Message) {
+            client.out.sendMessage(Message.getText());
+            Chat.add(Message.getText());
+            Message.setText("");
+        }
+    }
+        
+
+    public void setStatusConnection() {
+        Connection.setText("Verbunden mit Server auf: " + client.socket.getRemoteSocketAddress());
+    }
+
+    public void setStatusUsername() {
+        Username.setText("Eingeloggt als: " + client.username);
+    }
+
+    public void postMessage(String message) {
+        Chat.add(message);
+    }
+
+    public void setUsers(String[] UserList) {
+        Users.removeAll();
+        for (int i = 1; i < UserList.length - 1; ++i) {
+            Users.add(UserList[i]);
+        }
+    }
+
+    public void setRooms(String[] RoomList) {
+        Rooms.removeAll();
+        for (int i = 1; i < RoomList.length - 1; ++i) {
+            Rooms.add(RoomList[i]);
+        }
     }
 }

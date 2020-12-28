@@ -9,9 +9,10 @@ public class Client {
     boolean isLoggedIn = false;
     User user;
     boolean nameIsTaken = false;
-    String username;
+    String username = "";
     OutputThread out;
     InputThread in;
+    ClientGUI UI;
    
     public static void main(String[] args){
         new Client("localhost", 8000);
@@ -21,11 +22,13 @@ public class Client {
     	try{
             socket = new Socket(host, port);
             System.out.println("Mit Server verbunden");
+            UI = new ClientGUI(this);
+            UI.setStatusConnection();
+            
             out = new OutputThread(socket, this);
             in = new InputThread(socket, this);
             out.start();
             in.start();
-            ClientGUI UI = new ClientGUI(this);
         } catch(UnknownHostException e){
             e.printStackTrace();
         } catch(IOException e){
@@ -34,7 +37,8 @@ public class Client {
     }
    
     public void setUsername(String username) {
-    	this.username = username;
+        this.username = username;
+        this.user.setUsername(username);
     }
     
     public String getUsername() {

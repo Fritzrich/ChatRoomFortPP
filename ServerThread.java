@@ -72,11 +72,6 @@ public class ServerThread extends Thread {
 			server.changeUsername(username, newUsername);
 			username = newUsername;
 			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen ge�ndert!");
-    	} else if(message.startsWith(".createRoom")) {											//Kreiert Raum
-    		message = message.substring(11, message.length());
-    		server.allRooms.add(new Room(message, server));
-    		sendMessageToClient("Neue Raum"+ message);
-    		server.log("[Server]: Raum " + message + " wurde erstellt!");
     	} else if(message.startsWith(".changeRoomTo")) {										//Raum wechseln
     		message = message.substring(13, message.length());
     		server.addUserToRoom(server.getRoom(message), username);
@@ -84,16 +79,14 @@ public class ServerThread extends Thread {
     		sendMessageToClient("Raum gewechselt zu"+ message);
     	} else if(message.startsWith(".changeRoomName")){										//Raumnamen �ndern
     		message = message.substring(15, message.length());
-    		server.changeRoomName(room, message);
-    	} else if(message.startsWith(".deleteRoom")) {											//Raum l�schen
-    		message = message.substring(11, message.length());
-			server.deleteRoom(message);
-    	}
+			server.changeRoomName(room, message);
+		}
     }
     
     public void quit() {
     	sendMessageToClient("[Server]: Sie werden ausgeloggt!");
 		server.setUserOffline(username);
+		sendMessageExcept("[Server]: Es sind" + server.getOnlineUsers() + " | online!", this);
 		shouldRun = false;
     }
 
@@ -122,7 +115,7 @@ public class ServerThread extends Thread {
 						sendMessageToClient("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ");
 						password = reader.readLine();
 						if (server.checkPassword(tempUsername, password) == true) {
-							sendMessageToClient("[Server]: Sie sind eingeloggt!");
+							sendMessageToClient("[Server]: Sie sind eingeloggt als " + tempUsername);
 							passwordIsDone = true;
 						}
 					}
@@ -140,7 +133,8 @@ public class ServerThread extends Thread {
 			username = tempUsername;
 			// Login-Ende
 			server.addUserToRoom(server.getRoom("public"), username);
-			sendMessageToClient("[Server]: Es sind " + server.getOnlineUsers() + " online!");
+			sendMessageToAllClients("[Server]: Es sind" + server.getOnlineUsers() + " :: online!");
+			sendMessageToClient("[Server]: Raeume" + server.getOnlineRooms() + " :: vorhanden!");
 			sendMessageExcept("[Server]: " + username + " hat sich gerade eingeloggt!", this);
 			//Nachrichtendienst
 			while (shouldRun) {

@@ -25,7 +25,6 @@ public class Server extends Thread{
 
     public static void main(String[] args) {
         Server server = new Server(8000);
-        server.allRooms.add(new Room("public", server));
         server.readUserFile();
         server.start();
         server.startListening();
@@ -35,7 +34,8 @@ public class Server extends Thread{
         this.port = port;
     }
     
-    public void run() { //zum manuellen Schlie�en (type ".quit" in Console)
+	public void run() { //zum manuellen Schlie�en (type ".quit" in Console)
+	    this.allRooms.add(new Room("public", this));
     	Scanner scanner = new Scanner(System.in);
     	while(shouldRun) {
     		String command = scanner.nextLine();
@@ -212,7 +212,7 @@ public class Server extends Thread{
             	allRooms.remove(room);
             }
         }
-    	log("[Server]: Raum "+ roomName + " gel�scht!");
+    	log("[Server]: Raum "+ roomName + " geloescht!");
     }
     
     void addUserToRoom(Room room, String username) {
@@ -227,7 +227,7 @@ public class Server extends Thread{
             }
         }
     	return null;
-    }
+	}
     
     //Account-Management
     
@@ -268,7 +268,7 @@ public class Server extends Thread{
     void setUserOffline(String username) {
     	for(User user : allUsers){
             if(user.getUsername().equals(username)){
-                user.logOff();
+				user.logOff();
             }
         }
     	log("[Server]: User " + username + " hat sich ausgeloggt!");
@@ -317,8 +317,16 @@ public class Server extends Thread{
     public String getOnlineUsers() {
     	String users = "";
     	for(User user : allUsers) {
-    		if(user.isLoggedIn)	users += " | " + user.getUsername();
+    		if(user.isLoggedIn)	users += " :: " + user.getUsername();
     	}
     	return users;
+	}
+	
+	public String getOnlineRooms() {
+		String rooms = "";
+    	for(Room room : allRooms) {
+			rooms += " :: " + room.getRoomName();
+    	}
+    	return rooms;
     }
 }
