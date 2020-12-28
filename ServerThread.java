@@ -126,7 +126,7 @@ public class ServerThread extends Thread {
 					if (password.equals(".quit")) quit();
 					server.addUser(tempUsername, password);
 					server.registerToFile(tempUsername, password);
-					sendMessageToClient("[Server]: Sie sind eingeloggt!");
+					sendMessageToClient("[Server]: Sie sind eingeloggt als " + tempUsername);
 					loginIsDone = true;
 				}
 			}

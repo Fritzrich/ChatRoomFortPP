@@ -25,6 +25,7 @@ public class Server extends Thread{
 
     public static void main(String[] args) {
         Server server = new Server(8000);
+        new Room("public", server);
         server.readUserFile();
         server.start();
         server.startListening();
@@ -34,8 +35,7 @@ public class Server extends Thread{
         this.port = port;
     }
     
-	public void run() { //zum manuellen Schlie�en (type ".quit" in Console)
-	    this.allRooms.add(new Room("public", this));
+    public void run() { //zum manuellen Schlie�en (type ".quit" in Console)
     	Scanner scanner = new Scanner(System.in);
     	while(shouldRun) {
     		String command = scanner.nextLine();
@@ -142,7 +142,7 @@ public class Server extends Thread{
 			updateServerUserData();
 		} else if (command.startsWith(".createRoom")) { 				// Kreiert Raum
 			command = command.substring(11, command.length());
-			allRooms.add(new Room(command, this));
+			new Room(command, this);
 			log("[Server]: Raum " + command + " wurde erstellt!");
 		} else if (command.startsWith(".changeRoomName")) { 			// Raumnamen �ndern
 			//command = command.substring(15, command.length());
