@@ -7,7 +7,6 @@ public class Client {
 
     Socket socket;
     boolean isLoggedIn = false;
-    User user;
     boolean nameIsTaken = false;
     String username = "";
     OutputThread out;
@@ -38,11 +37,10 @@ public class Client {
    
     public void setUsername(String username) {
         this.username = username;
-        this.user.setUsername(username);
     }
     
     public String getUsername() {
-    	return user.getUsername();
+    	return username;
     }
     
     public void quit() {

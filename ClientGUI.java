@@ -9,10 +9,12 @@ public class ClientGUI implements ActionListener{
     private Panel ChatPanel = new Panel();
     private Panel MessagePanel = new Panel();
     private Panel RoomsPanel = new Panel();
+    private Panel RoomsListPanel = new Panel();
 
     private Label Username = new Label();
     private Label Connection = new Label();
-    private Button ToggleLists = new Button("Zeige Räume");
+    private Button ToggleLists = new Button("Zeige Raeume");
+    private LayoutManager card = new CardLayout();
     private Button Send = new Button("Senden");
     private List Chat = new List();
     private List Rooms = new List();
@@ -42,9 +44,12 @@ public class ClientGUI implements ActionListener{
             MessagePanel.add("Center", Message);
             MessagePanel.add("East", Send);
         
-        RoomsPanel.setLayout(new BorderLayout(0, 40));
-        RoomsPanel.add("North", ToggleLists);
-        RoomsPanel.add("Center", Users);
+        RoomsPanel.setLayout(new CardLayout(0, 40));
+            RoomsPanel.add("North", ToggleLists);
+            RoomsPanel.add("Center", RoomsListPanel);
+                RoomsListPanel.setLayout(card);
+                card.addLayoutComponent("user", Users);
+                card.addLayoutComponent("rooms", Rooms);
 
         UI = new Frame("Client-Chat");
         UI.setLayout(new BorderLayout(40, 40));
@@ -77,22 +82,37 @@ public class ClientGUI implements ActionListener{
         });
 
         Send.addActionListener(this);
-        Send.setActionCommand("send");
 
         Message.addActionListener(this);
+
+        Rooms.addActionListener(this);
+
+        ToggleLists.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent ev) {
-        if ("send".equals(ev.getActionCommand())) {             //sende Texteingabe über OutputThread
+        if (ev.getSource() == Send) {             //sende Texteingabe über OutputThread
             client.out.sendMessage(Message.getText());
             Chat.add(Message.getText());
             Message.setText("");
         }
 
-        if (ev.getSource() == Message) {
+        else if (ev.getSource() == Message) {
             client.out.sendMessage(Message.getText());
             Chat.add(Message.getText());
             Message.setText("");
+        }
+        else if (ev.getSource() == Rooms) {
+            client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());
+        }
+
+        else if (ev.getSource() == ToggleLists) {
+            if (ToggleLists.getLabel().equals("Zeige Nutzer")) {
+                ToggleLists.setLabel("Zeige Raeume");
+            } else {
+                ToggleLists.setLabel("Zeige Nutzer");
+            }
+            
         }
     }
         

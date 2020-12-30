@@ -18,10 +18,10 @@ public class OutputThread extends Thread {
 
 	public void sendMessage(String message) {
 		//Nachrichten-Service
-		if (client.isLoggedIn == true) {
+		//if (client.isLoggedIn == true) {
 			writer.println(message);
 			writer.flush();
-		//Login-Anfang
+		/*//Login-Anfang
 		} else {									
 			writer.println(message);
 			writer.flush();
@@ -32,7 +32,7 @@ public class OutputThread extends Thread {
 				writer.flush();
 				}
 			} 
-		}
+		}*/
 		//Login-Ende
 	}
 
