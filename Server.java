@@ -278,7 +278,7 @@ public class Server extends Thread{
 		}
 		UI.clearRooms();
 		for(Room room : allRooms) {
-			UI.addRoom(room.getRoomName() + " (" + room.userCount() + " User) ");
+			UI.addRoom(room.getRoomName() + " (" + room.userCount() + " Nutzer) ");
 		}
 		UI.addRoom("+ neuer Raum");
     }

@@ -99,16 +99,21 @@ public class ServerGUI implements ActionListener{
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource() == Rooms) {
             RoomManager.setVisible(true);
+            if (Rooms.getSelectedItem() != "+ neuer Raum") {
+                RoomCommand.setText(Rooms.getSelectedItem().split(" ")[0]);
+                RoomCommandType.select("Raum umbenennen in");
+            }
         } else if (ev.getSource() == Users) {
             UserManager.setVisible(true);
 
             if (Users.getSelectedItem() == "+ entbanne Nutzer") {
-                RoomCommandType.select(2);
+                UserCommandType.select("Folgenden Nutzer entbannen:");
             } else {
-                RoomCommand.setText(Users.getSelectedItem());
+                UserCommand.setText(Users.getSelectedItem().split("] ")[1]);
             }
         } else if (ev.getSource() == RoomCommand || ev.getSource() == RoomCommandApply) {   // Raum-Management
             String command = RoomCommand.getText();
+            String selectedRoom = Rooms.getSelectedItem().split(" ")[0];
             
             switch (RoomCommandType.getSelectedItem()) {
                 case "neuer Raum":
@@ -117,8 +122,8 @@ public class ServerGUI implements ActionListener{
                     server.log("[Server]: Raum " + command + " wurde erstellt!");
                     break;
                 case "Raum umbenennen in":                                          
-                    server.log("[Server]: Raum " + Rooms.getSelectedItem() + " wurde umbenannt zu" + command);
-                    server.getRoom(Rooms.getSelectedItem()).setRoomName(command);
+                    server.log("[Server]: Raum " + selectedRoom + " wurde umbenannt zu" + command);
+                    server.getRoom(selectedRoom).setRoomName(command);
                     server.getOnlineRooms();
                     break;
                 case "Raum loeschen":
