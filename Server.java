@@ -37,7 +37,7 @@ public class Server extends Thread{
     
 	public void run() {
 		UI = new ServerGUI(this);
-		getOnlineRooms();
+		setUserAndRooms();
     	while(shouldRun) {
 			try {
 				Thread.sleep(1);
@@ -259,13 +259,7 @@ public class Server extends Thread{
 		for (ServerThread st : connections) {
 			st.sendMessageToClient("[Server]: Es sind " + st.room.userInRoom());
 		}
-		UI.clearUsers();
-		for (Room room : allRooms) {
-			for (User user : room.userInRoom) {
-				UI.addUser("[" + room.getRoomName() + "] " + user.getUsername());
-			}
-		}
-		UI.addUser("+ Nutzer entbannen");			
+		setUserAndRooms();			
 	}
 	
 	public void getOnlineRooms() {
@@ -276,10 +270,23 @@ public class Server extends Thread{
     	for (ServerThread st : connections) {
 			st.sendMessageToClient("[Server]: Raeume" + rooms);
 		}
+		setUserAndRooms();
+	}
+	
+	public void setUserAndRooms() {
 		UI.clearRooms();
+		UI.clearUsers();
+
 		for(Room room : allRooms) {
 			UI.addRoom(room.getRoomName() + " (" + room.userCount() + " Nutzer) ");
 		}
 		UI.addRoom("+ neuer Raum");
-    }
+
+		for (Room room : allRooms) {
+			for (User user : room.userInRoom) {
+				UI.addUser("[" + room.getRoomName() + "] " + user.getUsername());
+			}
+		}
+		UI.addUser("+ Nutzer entbannen");
+	}
 }
