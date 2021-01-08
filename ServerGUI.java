@@ -55,7 +55,7 @@ public class ServerGUI implements ActionListener{
         RoomManager.add(RoomCommandType);
             RoomCommandType.add("neuer Raum");
             RoomCommandType.add("Raum umbenennen in");
-            RoomCommandType.add("Raum löschen");
+            RoomCommandType.add("Raum loeschen");
         RoomManager.add(RoomCommand);
         RoomManager.add(RoomCommandApply);
     }
@@ -65,8 +65,11 @@ public class ServerGUI implements ActionListener{
         UI.addWindowListener( new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent ev) {
-                server.handleCommand(".quit");
-                //System.exit(0);
+                for (ServerThread serverThread : server.connections) {
+                    serverThread.serverShutdown();
+                    server.log("[Server]: Server wurde heruntergefahren!");
+                }
+                server.shouldRun = false;
             }
         } );
 
@@ -86,32 +89,103 @@ public class ServerGUI implements ActionListener{
 
         Rooms.addActionListener(this);
         Users.addActionListener(this);
+
+        RoomCommandApply.addActionListener(this);
+        RoomCommand.addActionListener(this);
+
+        UserCommandApply.addActionListener(this);
+        UserCommand.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource() == Rooms) {
             RoomManager.setVisible(true);
-        }
-        else if (ev.getSource() == Users) {
+        } else if (ev.getSource() == Users) {
+            UserManager.setVisible(true);
+
             if (Users.getSelectedItem() == "+ entbanne Nutzer") {
-                RoomCommandType.select(3);
+                RoomCommandType.select(2);
             } else {
                 RoomCommand.setText(Users.getSelectedItem());
             }
-            UserManager.setVisible(true);
+        } else if (ev.getSource() == RoomCommand || ev.getSource() == RoomCommandApply) {   // Raum-Management
+            String command = RoomCommand.getText();
+            
+            switch (RoomCommandType.getSelectedItem()) {
+                case "neuer Raum":
+                    new Room(command, server);
+                    server.getOnlineRooms();
+                    server.log("[Server]: Raum " + command + " wurde erstellt!");
+                    break;
+                case "Raum umbenennen in":                                          
+                    server.log("[Server]: Raum " + Rooms.getSelectedItem() + " wurde umbenannt zu" + command);
+                    server.getRoom(Rooms.getSelectedItem()).setRoomName(command);
+                    server.getOnlineRooms();
+                    break;
+                case "Raum loeschen":
+                    if (command != "public") {
+                        server.deleteRoom(command);
+                        server.getOnlineRooms();
+                    }
+                    break;
+            }
+            RoomCommand.setText("");
+            RoomManager.setVisible(false);
+
+        } else if (ev.getSource() == UserCommand || ev.getSource() == UserCommandApply) {   // Nutzer-Management
+            String command = UserCommand.getText();
+
+            switch (UserCommandType.getSelectedItem()) {
+                case "Folgenden Nutzer verwarnen:":
+                    for(ServerThread st : server.connections) {
+                        if(st.username.equals(command)) {
+                            st.sendMessageToClient("[Server]: Bitte halten Sie die Spielregeln ein! Sonst kick!!!");
+                            server.log("[Server]: User " + command + " wurde verwarnt!");
+                        }
+                    }
+                    break;
+                case "Folgenden Nutzer kicken:":
+                    for(ServerThread st : server.connections) {
+                        if(st.username.equals(command)) {
+                            st.room.userInRoom.remove(server.getUser(command));
+                            st.sendMessageToClient("[Server]: Sie werden gekickt!");
+                            st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
+                            server.log("[Server]: User " + command + " wurde gekickt!");
+                            server.setUserOffline(command);
+                            st.quit();
+                        }
+                    }
+                    break;
+                case "Folgenden Nutzer bannen:":
+                    for(User user : server.allUsers) {
+                        if(user.getUsername().equals(command)) {
+                            server.getUser(command).ban();
+                            server.log("[Server]: User " + command + " wurde gebannt!");
+                            if(user.isLoggedIn) {
+                                for(ServerThread st : server.connections) {
+                                    if(st.username.equals(command)) {
+                                        st.room.userInRoom.remove(server.getUser(command));
+                                        st.sendMessageToClient("[Server]: Sie werden gebannt!");
+                                        st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
+                                    server.getUser(command).ban();
+                                    server.setUserOffline(command);
+                                    st.quit();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    server.updateServerUserData();
+                    break;
+                case "Folgenden Nutzer entbannen:":
+                    server.getUser(command).pardon();
+                    server.log("[Server]: User " + command + " wurde entbannt!");
+                    server.updateServerUserData();
+                    break;
+            }
+            UserCommand.setText("");
+            UserManager.setVisible(false);
         }
-        /*
-        *TODO: 
-        -bei Raumerstellung, aenderung & del muss sowohl Raumliste als auch userliste mit raumprefix aktualisiert werden,
-            dasselbe gilt, falls user raum wechselt oder user ausgeloggt wird
-                choice{neuer Raum}:
-                        createRoom-Funktionalität kopieren
-                choice{Namen aendern in }:
-                        Rooms.selected() mit *.getRooms(this.Rooms.selected()) in server<Rooms> ausfindig machen und *.setRoomName(Inhalt von TextField nehmen)
-                choice{loeschen}:
-                        deleteRoom-Funktionalität kpieren & zu löschenden raumnamen noch einmal in textfeld hineinschreiben
-                choice{user*}: analog zu neuer Raum -Choices 1 & 3 JEDOCH: Nutzername wird bei Choices 1,2,3 bereits in das Feld geschrieben durch *.setText(*.selected())
-        */
     }
 
     public void writeLog(String message) {

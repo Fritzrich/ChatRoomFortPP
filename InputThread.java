@@ -22,14 +22,14 @@ public class InputThread extends Thread	{
 			}
 	}
 	
-	//Empf�ngt, gibt Nachrichten aus und bearbeitet falls n�tig
+	//Empfaengt, gibt Nachrichten aus und bearbeitet falls noetig
 	public void run() {
 		while(shouldRun) {
 			try {
 				String message = reader.readLine();
 				System.out.println(message);
 				
-				//Login Ma�nahmen
+				//Login Massnahmen
 				if(message.equals("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ")) {
 					client.nameIsTaken = true;
 					client.UI.postMessage(message);
