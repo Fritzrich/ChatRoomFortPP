@@ -35,7 +35,10 @@ public class InputThread extends Thread	{
 					client.UI.postMessage(message);
 				}
 				else if(message.startsWith("[Server]: Sie sind eingeloggt als ")) {
-					client.username = message.substring(34, message.length());
+					message = message.substring(34, message.length());
+					String[] messageParts = message.split(" in Raum ");
+					client.username = messageParts[0];
+					client.room = messageParts[1];
 					client.isLoggedIn = true;
 					client.UI.setStatusUsername();
 					client.UI.postMessage(message);

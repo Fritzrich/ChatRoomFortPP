@@ -72,12 +72,14 @@ public class ServerThread extends Thread {
 			server.changeUsername(username, newUsername);
 			username = newUsername;
 			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen ge�ndert!");
+			sendMessageToClient("[Server]: Sie sind eingeloggt als " + username + " in Raum " + room.getRoomName());
 			server.getOnlineUsers();
     	} else if(message.startsWith(".changeRoomTo")) {										//Raum wechseln
     		message = message.substring(13, message.length());
 			room.removeUser(server.getUser(username));
 			room = server.getRoom(message);
 			server.addUserToRoom(server.getRoom(message), username);
+			sendMessageToClient("[Server]: Sie sind eingeloggt als " + username + " in Raum " + room.getRoomName());
     		sendMessageToClient("Raum gewechselt zu"+ message);
     	} else if(message.startsWith(".changeRoomName")){										//Raumnamen �ndern
     		message = message.substring(15, message.length());
@@ -119,7 +121,6 @@ public class ServerThread extends Thread {
 						sendMessageToClient("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ");
 						password = reader.readLine();
 						if (server.checkPassword(tempUsername, password) == true) {
-							sendMessageToClient("[Server]: Sie sind eingeloggt als " + tempUsername);
 							passwordIsDone = true;
 						}
 					}
@@ -130,13 +131,13 @@ public class ServerThread extends Thread {
 					if (password.equals(".quit")) quit();
 					server.addUser(tempUsername, password);
 					server.registerToFile(tempUsername, password);
-					sendMessageToClient("[Server]: Sie sind eingeloggt als " + tempUsername);
 					loginIsDone = true;
 				}
 			}
 			username = tempUsername;
 			// Login-Ende
 			server.addUserToRoom(server.getRoom("public"), username);
+			sendMessageToClient("[Server]: Sie sind eingeloggt als " + username + " in Raum " + room.getRoomName());
 			server.getOnlineRooms();
 			sendMessageExcept("[Server]: " + username + " hat sich gerade eingeloggt!", this);
 			//Nachrichtendienst

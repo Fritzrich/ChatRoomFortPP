@@ -9,6 +9,7 @@ public class Client {
     boolean isLoggedIn = false;
     boolean nameIsTaken = false;
     String username = "";
+    String room = "";
     OutputThread out;
     InputThread in;
     ClientGUI UI;

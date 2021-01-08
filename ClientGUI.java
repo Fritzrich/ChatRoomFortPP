@@ -10,7 +10,7 @@ public class ClientGUI implements ActionListener{
     private Panel StatusPanel = new Panel();
     private Panel ChatPanel = new Panel();
     private Panel MessagePanel = new Panel();
-    private Panel RoomsPanel = new Panel();
+    private JTabbedPane RoomsTab = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT );
 
     private Label Username = new Label();
     private Label Connection = new Label();
@@ -44,13 +44,13 @@ public class ClientGUI implements ActionListener{
             MessagePanel.add("Center", Message);
             MessagePanel.add("East", Send);
         
-        RoomsPanel.setLayout(new BorderLayout(0, 40));
-            RoomsPanel.add("North", ToggleLists);
-            RoomsPanel.add("Center", Users);
+            
+        RoomsTab.add("Raeume", Rooms);
+        RoomsTab.add("Nutzer", Users);
 
         UI = new JFrame("Client-Chat");
         UI.setLayout(new BorderLayout(40, 40));
-        UI.add("East", RoomsPanel);
+        UI.add("East", RoomsTab);
         UI.add("North", StatusPanel);
         UI.add("Center", ChatPanel);
     
@@ -108,8 +108,7 @@ public class ClientGUI implements ActionListener{
                 ToggleLists.setLabel("Zeige Raeume");
             } else {
                 ToggleLists.setLabel("Zeige Nutzer");
-            }
-            
+            }          
         }
     }
         
@@ -119,7 +118,7 @@ public class ClientGUI implements ActionListener{
     }
 
     public void setStatusUsername() {
-        Username.setText("Eingeloggt als: " + client.username);
+        Username.setText("Eingeloggt als: " + client.username + " in Raum " + client.room);
     }
 
     public void postMessage(String message) {
