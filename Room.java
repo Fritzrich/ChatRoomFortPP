@@ -35,5 +35,7 @@ public class Room {
 		}
 		return userList;
 	}
-	
+	public int userCount() {
+		return userInRoom.size();
+	}
 }

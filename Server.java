@@ -27,7 +27,7 @@ public class Server extends Thread{
         Server server = new Server(8000);
         new Room("public", server);
         server.readUserFile();
-        server.start();
+		server.start();
 		server.startListening();
     }
 
@@ -37,6 +37,7 @@ public class Server extends Thread{
     
 	public void run() {
 		UI = new ServerGUI(this);
+		getOnlineRooms();
     	while(shouldRun) {
 			try {
 				Thread.sleep(1);
@@ -242,7 +243,7 @@ public class Server extends Thread{
                user.setUsername(newUsername);
             }
         }
-        log("[Server]: User " + oldUsername + " hat seinen Namen zu " + newUsername + " ge�ndert");
+        log("[Server]: User " + oldUsername + " hat seinen Namen zu " + newUsername + " geaendert");
     }
     
     public boolean userIsOnline(String username) {
@@ -257,7 +258,14 @@ public class Server extends Thread{
     public void getOnlineUsers() {
 		for (ServerThread st : connections) {
 			st.sendMessageToClient("[Server]: Es sind " + st.room.userInRoom());
-		}			
+		}
+		UI.clearUsers();
+		for (Room room : allRooms) {
+			for (User user : room.userInRoom) {
+				UI.addUser("[" + room.getRoomName() + "] " + user.getUsername());
+			}
+		}
+		UI.addUser("+ Nutzer entbannen");			
 	}
 	
 	public void getOnlineRooms() {
@@ -268,5 +276,10 @@ public class Server extends Thread{
     	for (ServerThread st : connections) {
 			st.sendMessageToClient("[Server]: Raeume" + rooms);
 		}
+		UI.clearRooms();
+		for(Room room : allRooms) {
+			UI.addRoom(room.getRoomName() + " (" + room.userCount() + ") ");
+		}
+		UI.addRoom("+ neuer Raum");
     }
 }

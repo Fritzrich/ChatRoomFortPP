@@ -30,7 +30,6 @@ public class ServerGUI implements ActionListener{
 
     private void initComponents() {
         Status.add("Raeume", Rooms);
-            Rooms.add("+ neuer Raum");
         Status.add("Nutzer", Users);
             Users.add("+ entbanne Nutzer");
 
@@ -186,6 +185,22 @@ public class ServerGUI implements ActionListener{
             UserCommand.setText("");
             UserManager.setVisible(false);
         }
+    }
+
+    public void clearRooms() {
+        Rooms.removeAll();
+    }
+
+    public void addRoom(String room) {
+        Rooms.add(room);
+    }
+
+    public void clearUsers() {
+        Users.removeAll();
+    }
+
+    public void addUser(String user) {
+        Users.add(user);
     }
 
     public void writeLog(String message) {
