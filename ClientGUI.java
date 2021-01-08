@@ -60,10 +60,6 @@ public class ClientGUI implements ActionListener{
 
     private void initListener() {
 
-        UI.addWindowFocusListener(new WindowAdapter() {
-           
-        });
-
         UI.addWindowListener( new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

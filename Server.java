@@ -14,7 +14,8 @@ import java.util.Scanner;
 
 public class Server extends Thread{
 
-    private int port;
+	private int port;
+	private ServerGUI UI = new ServerGUI(this);
     ArrayList<ServerThread> connections = new ArrayList<ServerThread>();
     ArrayList<User> allUsers = new ArrayList<User>();
     boolean shouldRun = true;
@@ -28,20 +29,22 @@ public class Server extends Thread{
         new Room("public", server);
         server.readUserFile();
         server.start();
-        server.startListening();
+		server.startListening();
     }
-    
+
     public Server(int port){
         this.port = port;
     }
     
-    public void run() { //zum manuellen Schlie�en (type ".quit" in Console)
+	public void run() { //zum manuellen Schlie�en (type ".quit" in Console)
+		
     	Scanner scanner = new Scanner(System.in);
     	while(shouldRun) {
     		String command = scanner.nextLine();
     		handleCommand(command);
     	}
-    	scanner.close();
+		scanner.close();
+		System.exit(0);
     }
     
     public void readUserFile() {
@@ -81,7 +84,8 @@ public class Server extends Thread{
     	    String time = date.format(new Date());
     		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
     		writer.write("[" + time + "]: " + data + "\n");
-    		writer.close();
+			writer.close();
+			UI.writeLog("[" + time + "]: " + data + "\n");
     	} catch(IOException e) {
     		e.printStackTrace();
     	}
