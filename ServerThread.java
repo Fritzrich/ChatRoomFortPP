@@ -47,11 +47,11 @@ public class ServerThread extends Thread {
 
     public void handleCommand(String message){	
     	if(message.equals(".help")) {															//Commands anzeigen lassen
-    		sendMessageToClient(".quit - Sie werden ausgeloggt\n.changePassword - �ndern Sie ihr Passwort\n.changeUsername - �ndern Sie ihren Benutzernamen");
+    		sendMessageToClient(".quit - Sie werden ausgeloggt\n.changePassword - aendern Sie ihr Passwort\n.changeUsername - aendern Sie ihren Benutzernamen");
     	}
     	if(message.equals(".quit")) {															//Verbindung trennen
     		quit();
-    	} else if(message.equals(".changePassword")) {											//Passwort �ndern
+    	} else if(message.equals(".changePassword")) {											//Passwort aendern
     			sendMessageToClient("[Server]: Geben Sie ein neues Passwort ein: ");
     			String newPassword = "";
     			try {
@@ -60,8 +60,8 @@ public class ServerThread extends Thread {
 					e.printStackTrace();
 				}
     			server.changePassword(username, newPassword);
-    			sendMessageToClient("[Server]: Sie haben ihr Passwort ge�ndert!");
-    	} else if(message.equals(".changeUsername")) {											//Benutzernamen �ndern
+    			sendMessageToClient("[Server]: Sie haben ihr Passwort geaendert!");
+    	} else if(message.equals(".changeUsername")) {											//Benutzernamen aendern
     		sendMessageToClient("[Server]: Geben Sie einen neuen Benutzernamen ein: ");
 			String newUsername = "";
 			try {
@@ -71,7 +71,7 @@ public class ServerThread extends Thread {
 			}
 			server.changeUsername(username, newUsername);
 			username = newUsername;
-			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen ge�ndert!");
+			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geaendert!");
 			sendMessageToClient("[Server]: Sie sind eingeloggt als " + username + " in Raum " + room.getRoomName());
 			server.getOnlineUsers();
     	} else if(message.startsWith(".changeRoomTo")) {										//Raum wechseln

@@ -27,7 +27,7 @@ public class Server extends Thread{
         Server server = new Server(8000);
         new Room("public", server);
         server.readUserFile();
-        server.start();
+		server.start();
 		server.startListening();
     }
 
@@ -37,6 +37,7 @@ public class Server extends Thread{
     
 	public void run() {
 		UI = new ServerGUI(this);
+		getOnlineRooms();
     	while(shouldRun) {
 			try {
 				Thread.sleep(1);
@@ -90,75 +91,6 @@ public class Server extends Thread{
     	} catch(IOException e) {
     		e.printStackTrace();
     	}
-    }
-    
-    public void handleCommand(String command) {
-    	if(command.equals(".quit")) {
-			for (ServerThread serverThread : connections) {
-				serverThread.serverShutdown();
-				log("[Server]: Server wurde heruntergefahren!");
-			}
-			shouldRun = false;
-		} else if(command.startsWith(".kickUser")) {
-			command = command.substring(9, command.length());
-			for(ServerThread st : connections) {
-				if(st.username.equals(command)) {
-					st.room.userInRoom.remove(getUser(command));
-					st.sendMessageToClient("[Server]: Sie werden gekickt!");
-					st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
-					log("[Server]: User " + command + " wurde gekickt!");
-					setUserOffline(command);
-					st.quit();
-				}
-			}
-		} else if(command.startsWith(".warnUser")) {
-			command = command.substring(9, command.length());
-			for(ServerThread st : connections) {
-				if(st.username.equals(command)) {
-					st.sendMessageToClient("[Server]: Bitte halten Sie die Spielregeln ein! Sonst kick!!!");
-					log("[Server]: User " + command + " wurde verwarnt!");
-				}
-			} 
-		} else if(command.startsWith(".banUser")) {
-			command = command.substring(8, command.length());
-			for(User user : allUsers) {
-				if(user.getUsername().equals(command)) {
-					getUser(command).ban();
-					log("[Server]: User " + command + " wurde gebannt!");
-					if(user.isLoggedIn) {
-						for(ServerThread st : connections) {
-							if(st.username.equals(command)) {
-								st.room.userInRoom.remove(getUser(command));
-								st.sendMessageToClient("[Server]: Sie werden gebannt!");
-								st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
-								getUser(command).ban();
-								setUserOffline(command);
-								st.quit();
-							}
-						}
-					}
-				}
-			}
-			updateServerUserData();
-		} else if (command.startsWith(".pardon")) {
-			command = command.substring(7, command.length());
-			getUser(command).pardon();
-			log("[Server]: User " + command + " wurde entbannt!");
-			updateServerUserData();
-		} else if (command.startsWith(".createRoom")) { 				// Kreiert Raum
-			command = command.substring(11, command.length());
-			new Room(command, this);
-			getOnlineRooms();
-			log("[Server]: Raum " + command + " wurde erstellt!");
-		} else if (command.startsWith(".changeRoomName")) { 
-			getOnlineRooms();			// Raumnamen �ndern
-			//command = command.substring(15, command.length());
-			//changeRoomName(room, command);
-		} else if (command.startsWith(".deleteRoom")) { 				// Raum l�schen
-			command = command.substring(11, command.length());
-			deleteRoom(command);
-			getOnlineRooms();
-		}
     }
     
     public void updateServerUserData() {
@@ -311,7 +243,7 @@ public class Server extends Thread{
                user.setUsername(newUsername);
             }
         }
-        log("[Server]: User " + oldUsername + " hat seinen Namen zu " + newUsername + " ge�ndert");
+        log("[Server]: User " + oldUsername + " hat seinen Namen zu " + newUsername + " geaendert");
     }
     
     public boolean userIsOnline(String username) {
@@ -326,7 +258,14 @@ public class Server extends Thread{
     public void getOnlineUsers() {
 		for (ServerThread st : connections) {
 			st.sendMessageToClient("[Server]: Es sind " + st.room.userInRoom());
-		}			
+		}
+		UI.clearUsers();
+		for (Room room : allRooms) {
+			for (User user : room.userInRoom) {
+				UI.addUser("[" + room.getRoomName() + "] " + user.getUsername());
+			}
+		}
+		UI.addUser("+ Nutzer entbannen");			
 	}
 	
 	public void getOnlineRooms() {
@@ -337,5 +276,10 @@ public class Server extends Thread{
     	for (ServerThread st : connections) {
 			st.sendMessageToClient("[Server]: Raeume" + rooms);
 		}
+		UI.clearRooms();
+		for(Room room : allRooms) {
+			UI.addRoom(room.getRoomName() + " (" + room.userCount() + " User) ");
+		}
+		UI.addRoom("+ neuer Raum");
     }
 }
