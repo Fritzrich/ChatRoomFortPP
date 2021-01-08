@@ -10,12 +10,11 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
 
 public class Server extends Thread{
 
 	private int port;
-	private ServerGUI UI = new ServerGUI(this);
+	private ServerGUI UI;
     ArrayList<ServerThread> connections = new ArrayList<ServerThread>();
     ArrayList<User> allUsers = new ArrayList<User>();
     boolean shouldRun = true;
@@ -36,14 +35,16 @@ public class Server extends Thread{
         this.port = port;
     }
     
-	public void run() { //zum manuellen Schlie�en (type ".quit" in Console)
-		
-    	Scanner scanner = new Scanner(System.in);
+	public void run() {
+		UI = new ServerGUI(this);
     	while(shouldRun) {
-    		String command = scanner.nextLine();
-    		handleCommand(command);
+			try {
+				Thread.sleep(1);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
     	}
-		scanner.close();
 		System.exit(0);
     }
     

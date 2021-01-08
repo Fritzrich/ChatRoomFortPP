@@ -26,13 +26,13 @@ public class ServerGUI implements ActionListener{
 
         initComponents();
         initListener();
-        Rooms.add("Test");
-        Users.add("Testuser");
     }
 
     private void initComponents() {
         Status.add("Raeume", Rooms);
+            Rooms.add("+ neuer Raum");
         Status.add("Nutzer", Users);
+            Users.add("+ entbanne Nutzer");
 
         UI.setLayout(new BorderLayout());
         UI.add("Center", Serverlog);
@@ -66,6 +66,7 @@ public class ServerGUI implements ActionListener{
             @Override
             public void windowClosing(WindowEvent ev) {
                 server.handleCommand(".quit");
+                //System.exit(0);
             }
         } );
 
@@ -92,6 +93,11 @@ public class ServerGUI implements ActionListener{
             RoomManager.setVisible(true);
         }
         else if (ev.getSource() == Users) {
+            if (Users.getSelectedItem() == "+ entbanne Nutzer") {
+                RoomCommandType.select(3);
+            } else {
+                RoomCommand.setText(Users.getSelectedItem());
+            }
             UserManager.setVisible(true);
         }
         /*
