@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.plaf.PanelUI;
 
 public class ClientGUI implements ActionListener{
 
