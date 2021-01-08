@@ -6,7 +6,6 @@ import javax.swing.plaf.PanelUI;
 public class ClientGUI implements ActionListener{
 
     private Client client;
-    public boolean canPasswordBeSent = false;
     private JFrame UI;
     private Panel StatusPanel = new Panel();
     private Panel ChatPanel = new Panel();
@@ -22,22 +21,12 @@ public class ClientGUI implements ActionListener{
     private List Users = new List();
     private TextField Message = new TextField(256);
 
-    private Frame logInFrame = new Frame();
-    private TextField logInUsername = new TextField(32);
-    private TextField logInPassword = new TextField(32);
-    private Button logIn = new Button();
-    private Label logInUsernameLabel = new Label();
-    private Label logInPasswordLabel = new Label();
-    private Panel infoPanel = new Panel();
-    private Panel inputPanel = new Panel();
-    private Panel logInButtonPanel = new Panel();
     
     public ClientGUI (Client client) {
         this.client = client;
 
         initComponents();
         initListener();
-        logInFrame.setVisible(true);
     }
 
     private void initComponents () {
@@ -55,23 +44,6 @@ public class ClientGUI implements ActionListener{
             MessagePanel.setLayout(new BorderLayout(20, 0));
             MessagePanel.add("Center", Message);
             MessagePanel.add("East", Send);
-        
-        logInFrame.setSize(400,150);
-        logInFrame.setLayout(new BorderLayout());
-        infoPanel.setLayout(new BorderLayout());
-        inputPanel.setLayout(new BorderLayout());
-        logInButtonPanel.setLayout(new FlowLayout());
-        inputPanel.add("North", logInUsername);
-        inputPanel.add("South", logInPassword);
-        logInButtonPanel.add(logIn);
-        logInFrame.add("South", logInButtonPanel);
-        infoPanel.add("North", logInUsernameLabel);
-        infoPanel.add("South", logInPasswordLabel);
-        logInUsernameLabel.setText("Benutzername");
-        logInPasswordLabel.setText("Passwort");
-        logInFrame.add("West", infoPanel);
-        logInFrame.add("East", inputPanel);
-
             
         RoomsTab.add("Raeume", Rooms);
         RoomsTab.add("Nutzer", Users);
@@ -102,15 +74,6 @@ public class ClientGUI implements ActionListener{
             }
         });
 
-        logInFrame.addWindowListener( new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent ev) {
-                logInFrame.setVisible(false);
-                client.out.writer.println(".quit");
-                client.out.writer.flush();
-            }
-        });
-
         Send.addActionListener(this);
 
         Message.addActionListener(this);
@@ -119,7 +82,6 @@ public class ClientGUI implements ActionListener{
 
         ToggleLists.addActionListener(this);
 
-        logIn.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -143,13 +105,6 @@ public class ClientGUI implements ActionListener{
             } else {
                 ToggleLists.setLabel("Zeige Nutzer");
             }          
-        }
-        else if (ev.getSource() == logIn) {
-            if(!client.nameIsTaken) client.out.sendMessage(logInUsername.getText());
-            while(!canPasswordBeSent){
-            }
-            client.out.sendMessage(logInPassword.getText());
-            logInFrame.setVisible(false);
         }
     }
         

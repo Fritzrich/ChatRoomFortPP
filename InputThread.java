@@ -33,10 +33,6 @@ public class InputThread extends Thread	{
 				if(message.equals("[Server]: Sie haben bereits einen Account! Geben Sie das korrekte Passwort ein:  ")) {
 					client.nameIsTaken = true;
 					client.UI.postMessage(message);
-					client.UI.canPasswordBeSent = true;
-				}
-				else if(message.equals("[Server]: Geben Sie ein Passwort ein: ")){
-					client.UI.canPasswordBeSent = true;
 				}
 				else if(message.startsWith("[Server]: Sie sind eingeloggt als ")) {
 					message = message.substring(34, message.length());
