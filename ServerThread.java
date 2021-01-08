@@ -72,10 +72,12 @@ public class ServerThread extends Thread {
 			server.changeUsername(username, newUsername);
 			username = newUsername;
 			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen ge�ndert!");
+			server.getOnlineUsers();
     	} else if(message.startsWith(".changeRoomTo")) {										//Raum wechseln
     		message = message.substring(13, message.length());
-    		server.addUserToRoom(server.getRoom(message), username);
-    		room = server.getRoom(message);
+			room.removeUser(server.getUser(username));
+			room = server.getRoom(message);
+			server.addUserToRoom(server.getRoom(message), username);
     		sendMessageToClient("Raum gewechselt zu"+ message);
     	} else if(message.startsWith(".changeRoomName")){										//Raumnamen �ndern
     		message = message.substring(15, message.length());
@@ -84,9 +86,11 @@ public class ServerThread extends Thread {
     }
     
     public void quit() {
-    	sendMessageToClient("[Server]: Sie werden ausgeloggt!");
+		sendMessageToClient("[Server]: Sie werden ausgeloggt!");
+		room.removeUser(server.getUser(username));
 		server.setUserOffline(username);
-		sendMessageExcept("[Server]: Es sind" + server.getOnlineUsers() + " | online!", this);
+		server.connections.remove(this);
+		server.getOnlineUsers();
 		shouldRun = false;
     }
 
@@ -133,8 +137,7 @@ public class ServerThread extends Thread {
 			username = tempUsername;
 			// Login-Ende
 			server.addUserToRoom(server.getRoom("public"), username);
-			sendMessageToAllClients("[Server]: Es sind" + server.getOnlineUsers() + " :: online!");
-			sendMessageToClient("[Server]: Raeume" + server.getOnlineRooms() + " :: vorhanden!");
+			server.getOnlineRooms();
 			sendMessageExcept("[Server]: " + username + " hat sich gerade eingeloggt!", this);
 			//Nachrichtendienst
 			while (shouldRun) {
@@ -158,7 +161,6 @@ public class ServerThread extends Thread {
 				reader.close();
 				writer.close();
 				client.close();
-				server.connections.remove(this);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

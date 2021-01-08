@@ -143,13 +143,16 @@ public class Server extends Thread{
 		} else if (command.startsWith(".createRoom")) { 				// Kreiert Raum
 			command = command.substring(11, command.length());
 			new Room(command, this);
+			getOnlineRooms();
 			log("[Server]: Raum " + command + " wurde erstellt!");
-		} else if (command.startsWith(".changeRoomName")) { 			// Raumnamen �ndern
+		} else if (command.startsWith(".changeRoomName")) { 
+			getOnlineRooms();			// Raumnamen �ndern
 			//command = command.substring(15, command.length());
 			//changeRoomName(room, command);
 		} else if (command.startsWith(".deleteRoom")) { 				// Raum l�schen
 			command = command.substring(11, command.length());
 			deleteRoom(command);
+			getOnlineRooms();
 		}
     }
     
@@ -216,7 +219,8 @@ public class Server extends Thread{
     }
     
     void addUserToRoom(Room room, String username) {
-    	room.addUser(getUser(username));
+		room.addUser(getUser(username));
+		getOnlineUsers();
     	log("[Server]: User " + username + " hat den Raum "+ room.getRoomName() + " betreten!");
     }
     
@@ -314,19 +318,19 @@ public class Server extends Thread{
     	return false;
     }
     
-    public String getOnlineUsers() {
-    	String users = "";
-    	for(User user : allUsers) {
-    		if(user.isLoggedIn)	users += " :: " + user.getUsername();
-    	}
-    	return users;
+    public void getOnlineUsers() {
+		for (ServerThread st : connections) {
+			st.sendMessageToClient("[Server]: Es sind " + st.room.userInRoom());
+		}			
 	}
 	
-	public String getOnlineRooms() {
+	public void getOnlineRooms() {
 		String rooms = "";
     	for(Room room : allRooms) {
 			rooms += " :: " + room.getRoomName();
     	}
-    	return rooms;
+    	for (ServerThread st : connections) {
+			st.sendMessageToClient("[Server]: Raeume" + rooms);
+		}
     }
 }

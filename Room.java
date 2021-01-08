@@ -22,5 +22,18 @@ public class Room {
 	public void	addUser(User newUser) {
 		userInRoom.add(newUser);
 	}
+
+	public void removeUser(User oldUser) {
+		userInRoom.remove(oldUser);
+	}
+
+	public String userInRoom() {
+		String userList = "";
+		
+		for (User user : userInRoom) {
+			userList += " :: " + user.getUsername();
+		}
+		return userList;
+	}
 	
 }

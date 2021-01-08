@@ -1,20 +1,20 @@
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.*;
+
 public class ClientGUI implements ActionListener{
 
     private Client client;
-    private Frame UI;
+    private JFrame UI;
     private Panel StatusPanel = new Panel();
     private Panel ChatPanel = new Panel();
     private Panel MessagePanel = new Panel();
     private Panel RoomsPanel = new Panel();
-    private Panel RoomsListPanel = new Panel();
 
     private Label Username = new Label();
     private Label Connection = new Label();
     private Button ToggleLists = new Button("Zeige Raeume");
-    private LayoutManager card = new CardLayout();
     private Button Send = new Button("Senden");
     private List Chat = new List();
     private List Rooms = new List();
@@ -44,14 +44,11 @@ public class ClientGUI implements ActionListener{
             MessagePanel.add("Center", Message);
             MessagePanel.add("East", Send);
         
-        RoomsPanel.setLayout(new CardLayout(0, 40));
+        RoomsPanel.setLayout(new BorderLayout(0, 40));
             RoomsPanel.add("North", ToggleLists);
-            RoomsPanel.add("Center", RoomsListPanel);
-                RoomsListPanel.setLayout(card);
-                card.addLayoutComponent("user", Users);
-                card.addLayoutComponent("rooms", Rooms);
+            RoomsPanel.add("Center", Users);
 
-        UI = new Frame("Client-Chat");
+        UI = new JFrame("Client-Chat");
         UI.setLayout(new BorderLayout(40, 40));
         UI.add("East", RoomsPanel);
         UI.add("North", StatusPanel);
@@ -131,14 +128,14 @@ public class ClientGUI implements ActionListener{
 
     public void setUsers(String[] UserList) {
         Users.removeAll();
-        for (int i = 1; i < UserList.length - 1; ++i) {
+        for (int i = 1; i < UserList.length; ++i) {
             Users.add(UserList[i]);
         }
     }
 
     public void setRooms(String[] RoomList) {
         Rooms.removeAll();
-        for (int i = 1; i < RoomList.length - 1; ++i) {
+        for (int i = 1; i < RoomList.length; ++i) {
             Rooms.add(RoomList[i]);
         }
     }
