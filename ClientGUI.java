@@ -41,13 +41,13 @@ public class ClientGUI implements ActionListener{
     private void initComponents () {
 
         NewUsername.setLayout(new FlowLayout(FlowLayout.CENTER));
-        NewUsername.setSize(610, 150);
+        NewUsername.setSize(550, 150);
             NewUsername.add(NewUsernameText);
             NewUsername.add(NewUsernameApply);
             NewUsername.add(NewUsernameError);
         
             NewPassword.setLayout(new FlowLayout(FlowLayout.LEFT));
-            NewPassword.setSize(610, 150);
+            NewPassword.setSize(550, 150);
                 NewPassword.add(NewPasswordText);
                 NewPassword.add(NewPasswordApply);
 
@@ -107,14 +107,15 @@ public class ClientGUI implements ActionListener{
             }
         });
 
-        NewUsername.addWindowFocusListener(new WindowAdapter() {
+        NewUsername.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 NewUsernameText.setText("");
+                NewUsernameError.setText("");
                 NewUsername.setVisible(false);
             }
         });
 
-        NewPassword.addWindowFocusListener(new WindowAdapter() {
+        NewPassword.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 NewPasswordText.setText("");
                 NewPassword.setVisible(false);
