@@ -69,31 +69,18 @@ public class ClientGUI implements ActionListener{
         RoomsTab.add("Raeume", Rooms);
         RoomsTab.add("Nutzer", Users);
 
-<<<<<<< HEAD
         UI = new Frame("Client-Chat");
-=======
-        Bar.add(Options);
-            Options.add("neuer Nutzername");
-            Options.add("neues Passwort");
-
-        UI = new JFrame("Client-Chat");
->>>>>>> cc6d734737b479e3334b61c4588c7b1a538a99f3
         UI.setLayout(new BorderLayout(40, 40));
 
         UI.add("East", RoomsTab);
         UI.add("North", StatusPanel);
         UI.add("Center", ChatPanel);
 
-<<<<<<< HEAD
         UI.setBackground(Color.lightGray);              //Colors
         StatusPanel.setBackground(Color.lightGray);
         ChatPanel.setBackground(Color.lightGray);
         MessagePanel.setBackground(Color.lightGray);
 
-=======
-        UI.setMenuBar(Bar);
-    
->>>>>>> cc6d734737b479e3334b61c4588c7b1a538a99f3
         UI.setSize(1000, 800);
         UI.setVisible(true);
     }
@@ -118,15 +105,6 @@ public class ClientGUI implements ActionListener{
         Message.addActionListener(this);
         Rooms.addActionListener(this);
 
-<<<<<<< HEAD
-=======
-        Options.addActionListener(this);
-
-        NewUsernameText.addActionListener(this);
-        NewUsernameApply.addActionListener(this);
-        NewPasswordText.addActionListener(this);
-        NewPasswordApply.addActionListener(this);
->>>>>>> cc6d734737b479e3334b61c4588c7b1a538a99f3
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -142,20 +120,7 @@ public class ClientGUI implements ActionListener{
             Message.setText("");
         }
         else if (ev.getSource() == Rooms) {
-<<<<<<< HEAD
             client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());
-=======
-            client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());         
-        } else if (ev.getActionCommand() == "neuer Nutzername") {
-            NewUsername.setVisible(true);       
-        } else if (ev.getActionCommand() == "neues Passwort") {
-            NewPassword.setVisible(true);
-        } else if (ev.getSource() == NewUsernameText || ev.getSource() == NewUsernameApply) {
-            client.out.sendMessage(".changeUsername" + NewUsernameText.getText());
-        } else if (ev.getSource() == NewPasswordText || ev.getSource() == NewPasswordApply) {
-            client.out.sendMessage(".changePassword" + NewPasswordText.getText());
-            NewPassword.setVisible(false);
->>>>>>> cc6d734737b479e3334b61c4588c7b1a538a99f3
         }
     }
         
