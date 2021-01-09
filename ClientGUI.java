@@ -80,6 +80,8 @@ public class ClientGUI implements ActionListener{
         UI.add("North", StatusPanel);
         UI.add("Center", ChatPanel);
 
+        UI.setMenuBar(Bar);
+
         UI.setBackground(Color.lightGray);              //Colors
         StatusPanel.setBackground(Color.lightGray);
         ChatPanel.setBackground(Color.lightGray);
