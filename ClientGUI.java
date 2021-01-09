@@ -5,7 +5,7 @@ import javax.swing.*;
 public class ClientGUI implements ActionListener{
 
     private Client client;
-    private JFrame UI;
+    private Frame UI;
     private Panel StatusPanel = new Panel();
     private Panel ChatPanel = new Panel();
     private Panel MessagePanel = new Panel();
@@ -73,7 +73,7 @@ public class ClientGUI implements ActionListener{
             Options.add("neuer Nutzername");
             Options.add("neues Passwort");
 
-        UI = new JFrame("Client-Chat");
+        UI = new Frame("Client-Chat");
         UI.setLayout(new BorderLayout(40, 40));
 
         UI.add("East", RoomsTab);
