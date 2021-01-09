@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -52,7 +51,7 @@ public class Server extends Thread{
     public void readUserFile() {
     	String line;
 		try {
-			BufferedReader readbuffer = new BufferedReader( new FileReader("ServerUserData.txt"));
+			BufferedReader readbuffer = new BufferedReader(new FileReader(fileUserData));
 			line = readbuffer.readLine();
 			while(line != null){
 				String username = line;
