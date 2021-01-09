@@ -29,6 +29,11 @@ public class ServerGUI implements ActionListener{
     }
 
     private void initComponents() {
+
+        UI.setBackground(Color.lightGray);          //Colors
+        RoomManager.setBackground(Color.lightGray);
+        UserManager.setBackground(Color.lightGray);
+
         Status.add("Raeume", Rooms);
         Status.add("Nutzer", Users);
             Users.add("+ entbanne Nutzer");

@@ -69,10 +69,13 @@ public class ClientGUI implements ActionListener{
         RoomsTab.add("Raeume", Rooms);
         RoomsTab.add("Nutzer", Users);
 
+<<<<<<< HEAD
         Bar.add(Options);
             Options.add("neuer Nutzername");
             Options.add("neues Passwort");
 
+=======
+>>>>>>> c7cc036cee02c4e30bdeec1f1c3ed358248bc548
         UI = new Frame("Client-Chat");
         UI.setLayout(new BorderLayout(40, 40));
 
@@ -80,8 +83,11 @@ public class ClientGUI implements ActionListener{
         UI.add("North", StatusPanel);
         UI.add("Center", ChatPanel);
 
-        UI.setMenuBar(Bar);
-    
+        UI.setBackground(Color.lightGray);              //Colors
+        StatusPanel.setBackground(Color.lightGray);
+        ChatPanel.setBackground(Color.lightGray);
+        MessagePanel.setBackground(Color.lightGray);
+
         UI.setSize(1000, 800);
         UI.setVisible(true);
     }
@@ -106,12 +112,6 @@ public class ClientGUI implements ActionListener{
         Message.addActionListener(this);
         Rooms.addActionListener(this);
 
-        Options.addActionListener(this);
-
-        NewUsernameText.addActionListener(this);
-        NewUsernameApply.addActionListener(this);
-        NewPasswordText.addActionListener(this);
-        NewPasswordApply.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -127,16 +127,7 @@ public class ClientGUI implements ActionListener{
             Message.setText("");
         }
         else if (ev.getSource() == Rooms) {
-            client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());         
-        } else if (ev.getActionCommand() == "neuer Nutzername") {
-            NewUsername.setVisible(true);       
-        } else if (ev.getActionCommand() == "neues Passwort") {
-            NewPassword.setVisible(true);
-        } else if (ev.getSource() == NewUsernameText || ev.getSource() == NewUsernameApply) {
-            client.out.sendMessage(".changeUsername" + NewUsernameText.getText());
-        } else if (ev.getSource() == NewPasswordText || ev.getSource() == NewPasswordApply) {
-            client.out.sendMessage(".changePassword" + NewPasswordText.getText());
-            NewPassword.setVisible(false);
+            client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());
         }
     }
         
