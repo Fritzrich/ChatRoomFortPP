@@ -53,6 +53,16 @@ public class InputThread extends Thread	{
 				else if(message.startsWith("[Server]: Raeume ")) {
 					client.UI.setRooms(message.split(" :: "));
 				}
+				else if(message.equals("[Server]: Der Benutzername existiert bereits!")) {
+					if (client.UI.isNewUsernameVisible()) {
+						client.UI.setNewUsernameError();
+					}
+				}
+				else if (message.equals("[Server]: Sie haben ihren Benutzernamen geaendert!")) {
+					if (client.UI.isNewUsernameVisible()) {
+						client.UI.setNewUsernameInvisible();
+					}
+				}
 				else {
 					client.UI.postMessage(message);
 				}

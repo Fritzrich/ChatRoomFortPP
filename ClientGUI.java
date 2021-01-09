@@ -13,13 +13,23 @@ public class ClientGUI implements ActionListener{
 
     private Label Username = new Label();
     private Label Connection = new Label();
-    private Button ToggleLists = new Button("Zeige Raeume");
     private Button Send = new Button("Senden");
     private List Chat = new List();
     private List Rooms = new List();
     private List Users = new List();
     private TextField Message = new TextField(256);
 
+    private Menu Options = new Menu("Optionen");
+    private MenuBar Bar = new MenuBar();
+
+    private Frame NewUsername = new Frame("Benutzernamen aendern");
+    private Label NewUsernameError = new Label("");
+    private TextField NewUsernameText = new TextField(32);
+    private Button NewUsernameApply = new Button("Aendern");
+
+    private Frame NewPassword = new Frame("Passwort aendern");
+    private TextField NewPasswordText = new TextField(32);
+    private Button NewPasswordApply = new Button("Aendern");
     
     public ClientGUI (Client client) {
         this.client = client;
@@ -29,6 +39,18 @@ public class ClientGUI implements ActionListener{
     }
 
     private void initComponents () {
+
+        NewUsername.setLayout(new FlowLayout(FlowLayout.CENTER));
+        NewUsername.setSize(610, 150);
+            NewUsername.add(NewUsernameText);
+            NewUsername.add(NewUsernameApply);
+            NewUsername.add(NewUsernameError);
+        
+            NewPassword.setLayout(new FlowLayout(FlowLayout.LEFT));
+            NewPassword.setSize(610, 150);
+                NewPassword.add(NewPasswordText);
+                NewPassword.add(NewPasswordApply);
+
         StatusPanel.setLayout(new BorderLayout());
         StatusPanel.add("North", Username);
             Username.setText("Noch nicht angemeldet.");
@@ -47,11 +69,18 @@ public class ClientGUI implements ActionListener{
         RoomsTab.add("Raeume", Rooms);
         RoomsTab.add("Nutzer", Users);
 
+        Bar.add(Options);
+            Options.add("neuer Nutzername");
+            Options.add("neues Passwort");
+
         UI = new JFrame("Client-Chat");
         UI.setLayout(new BorderLayout(40, 40));
+
         UI.add("East", RoomsTab);
         UI.add("North", StatusPanel);
         UI.add("Center", ChatPanel);
+
+        UI.setMenuBar(Bar);
     
         UI.setSize(1000, 800);
         UI.setVisible(true);
@@ -74,13 +103,15 @@ public class ClientGUI implements ActionListener{
         });
 
         Send.addActionListener(this);
-
         Message.addActionListener(this);
-
         Rooms.addActionListener(this);
 
-        ToggleLists.addActionListener(this);
+        Options.addActionListener(this);
 
+        NewUsernameText.addActionListener(this);
+        NewUsernameApply.addActionListener(this);
+        NewPasswordText.addActionListener(this);
+        NewPasswordApply.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -96,14 +127,16 @@ public class ClientGUI implements ActionListener{
             Message.setText("");
         }
         else if (ev.getSource() == Rooms) {
-            client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());
-        }
-        else if (ev.getSource() == ToggleLists) {
-            if (ToggleLists.getLabel().equals("Zeige Nutzer")) {
-                ToggleLists.setLabel("Zeige Raeume");
-            } else {
-                ToggleLists.setLabel("Zeige Nutzer");
-            }          
+            client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());         
+        } else if (ev.getActionCommand() == "neuer Nutzername") {
+            NewUsername.setVisible(true);       
+        } else if (ev.getActionCommand() == "neues Passwort") {
+            NewPassword.setVisible(true);
+        } else if (ev.getSource() == NewUsernameText || ev.getSource() == NewUsernameApply) {
+            client.out.sendMessage(".changeUsername" + NewUsernameText.getText());
+        } else if (ev.getSource() == NewPasswordText || ev.getSource() == NewPasswordApply) {
+            client.out.sendMessage(".changePassword" + NewPasswordText.getText());
+            NewPassword.setVisible(false);
         }
     }
         
@@ -132,5 +165,18 @@ public class ClientGUI implements ActionListener{
         for (int i = 1; i < RoomList.length; ++i) {
             Rooms.add(RoomList[i]);
         }
+    }
+
+    public boolean isNewUsernameVisible () {
+        return NewUsername.isVisible();
+    }
+
+    public void setNewUsernameInvisible() {
+        NewUsernameText.setText("");
+        NewUsername.setVisible(false);
+    }
+
+    public void setNewUsernameError() {
+        NewUsernameError.setText("Dieser Benutzername ist bereits vergeben!");
     }
 }
