@@ -45,7 +45,7 @@ public class Server extends Thread{
 			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-    	}
+        }
 		System.exit(0);
     }
     
@@ -95,7 +95,7 @@ public class Server extends Thread{
     
     public void updateServerUserData() {
     	try {
-			FileWriter fw = new FileWriter("serverUserData.txt");
+			BufferedWriter fw = new BufferedWriter( new FileWriter(fileUserData, false));
 			String updatedText = "";
 			for(User user : allUsers) {
 				updatedText += user.getUsername() + "\n" + user.getPassword() + "\n" + Boolean.toString(user.isBanned) + "\n";

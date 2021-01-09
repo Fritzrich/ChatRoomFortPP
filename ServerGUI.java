@@ -44,7 +44,7 @@ public class ServerGUI implements ActionListener{
         UI.setSize(1000, 800);
         UI.setVisible(true);
 
-        UserManager.setSize(600,100);
+        UserManager.setSize(600,150);
         UserManager.setLayout(new FlowLayout(FlowLayout.CENTER));
         UserManager.add(UserCommandType);
             UserCommandType.add("Folgenden Nutzer verwarnen:");
@@ -73,6 +73,7 @@ public class ServerGUI implements ActionListener{
                     serverThread.serverShutdown();
                     server.log("[Server]: Server wurde heruntergefahren!");
                 }
+                server.updateServerUserData();
                 server.shouldRun = false;
             }
         } );

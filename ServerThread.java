@@ -51,29 +51,21 @@ public class ServerThread extends Thread {
     	}
     	if(message.equals(".quit")) {															//Verbindung trennen
     		quit();
-    	} else if(message.equals(".changePassword")) {											//Passwort aendern
-    			sendMessageToClient("[Server]: Geben Sie ein neues Passwort ein: ");
-    			String newPassword = "";
-    			try {
-    				newPassword = reader.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-    			server.changePassword(username, newPassword);
+    	} else if(message.startsWith(".changePassword")) {										//Passwort aendern
+				String newPassword = message.substring(15, message.length());
+				server.changePassword(username, newPassword);
     			sendMessageToClient("[Server]: Sie haben ihr Passwort geaendert!");
-    	} else if(message.equals(".changeUsername")) {											//Benutzernamen aendern
-    		sendMessageToClient("[Server]: Geben Sie einen neuen Benutzernamen ein: ");
-			String newUsername = "";
-			try {
-				newUsername = reader.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
+    	} else if(message.startsWith(".changeUsername")) {											//Benutzernamen aendern
+			String newUsername = message.substring(15, message.length());
+			if (server.getUser(newUsername) != null) {
+				sendMessageToClient("[Server]: Der Benutzername existiert bereits!");
+			} else {
+				server.changeUsername(username, newUsername);
+				username = newUsername;
+				sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geaendert!");
+				sendMessageToClient("[Server]: Sie sind eingeloggt als " + username + " in Raum " + room.getRoomName());
+				server.getOnlineUsers();
 			}
-			server.changeUsername(username, newUsername);
-			username = newUsername;
-			sendMessageToClient("[Server]: Sie haben ihren Benutzernamen geaendert!");
-			sendMessageToClient("[Server]: Sie sind eingeloggt als " + username + " in Raum " + room.getRoomName());
-			server.getOnlineUsers();
     	} else if(message.startsWith(".changeRoomTo")) {										//Raum wechseln
     		message = message.substring(13, message.length());
 			room.removeUser(server.getUser(username));
@@ -81,10 +73,7 @@ public class ServerThread extends Thread {
 			server.addUserToRoom(server.getRoom(message), username);
 			sendMessageToClient("[Server]: Sie sind eingeloggt als " + username + " in Raum " + room.getRoomName());
     		sendMessageToClient("Raum gewechselt zu"+ message);
-    	} else if(message.startsWith(".changeRoomName")){										//Raumnamen �ndern
-    		message = message.substring(15, message.length());
-			server.changeRoomName(room, message);
-		}
+    	} 
     }
     
     public void quit() {
@@ -111,10 +100,7 @@ public class ServerThread extends Thread {
 				if(server.searchUser(tempUsername) == true && server.getUser(tempUsername).isBanned == true) {
 					sendMessageToClient("[Server]: Der Nutzer " + tempUsername + " ist gebannt!");
 				}
-				else if (tempUsername.equals(".quit")) {
-					quit();
-					loginIsDone = true;
-				}
+				else if (tempUsername.equals(".quit")) quit();
 				else if (server.searchUser(tempUsername) == true) {			//User existiert
 					boolean passwordIsDone = false;
 					while (passwordIsDone == false) {
