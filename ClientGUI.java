@@ -133,7 +133,7 @@ public class ClientGUI implements ActionListener{
         else if (ev.getSource() == Rooms) {
             client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());
         }
-         else if (ev.getActionCommand() == "neuer Nutzername") {
+        else if (ev.getActionCommand() == "neuer Nutzername") {
             NewUsername.setVisible(true);       
         } else if (ev.getActionCommand() == "neues Passwort") {
             NewPassword.setVisible(true);
