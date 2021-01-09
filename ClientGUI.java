@@ -195,6 +195,7 @@ public class ClientGUI implements ActionListener{
 
     public void setNewUsernameInvisible() {
         NewUsernameText.setText("");
+        NewUsernameError.setText("");
         NewUsername.setVisible(false);
     }
 
