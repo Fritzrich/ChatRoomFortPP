@@ -108,14 +108,14 @@ public class ClientGUI implements ActionListener{
         });
 
         NewUsername.addWindowFocusListener(new WindowAdapter() {
-            public void windowGainedFocus(WindowEvent we) {
+            public void windowClosing(WindowEvent we) {
                 NewUsernameText.setText("");
                 NewUsername.setVisible(false);
             }
         });
 
         NewPassword.addWindowFocusListener(new WindowAdapter() {
-            public void windowGainedFocus(WindowEvent we) {
+            public void windowClosing(WindowEvent we) {
                 NewPasswordText.setText("");
                 NewPassword.setVisible(false);
             }
