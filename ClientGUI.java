@@ -107,6 +107,20 @@ public class ClientGUI implements ActionListener{
             }
         });
 
+        NewUsername.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent we) {
+                NewUsernameText.setText("");
+                NewUsername.setVisible(false);
+            }
+        });
+
+        NewPassword.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent we) {
+                NewPasswordText.setText("");
+                NewPassword.setVisible(false);
+            }
+        });
+
         Send.addActionListener(this);
         Message.addActionListener(this);
         Rooms.addActionListener(this);
@@ -136,9 +150,9 @@ public class ClientGUI implements ActionListener{
             client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());
         }
         else if (ev.getActionCommand() == "neuer Nutzername") {
-            NewUsername.setVisible(true);       
+            if(client.isLoggedIn) NewUsername.setVisible(true);       
         } else if (ev.getActionCommand() == "neues Passwort") {
-            NewPassword.setVisible(true);
+            if(client.isLoggedIn) NewPassword.setVisible(true);
         } else if (ev.getSource() == NewUsernameText || ev.getSource() == NewUsernameApply) {
         client.out.sendMessage(".changeUsername" + NewUsernameText.getText());
         } else if (ev.getSource() == NewPasswordText || ev.getSource() == NewPasswordApply) {
