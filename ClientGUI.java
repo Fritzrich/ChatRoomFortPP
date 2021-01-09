@@ -5,7 +5,7 @@ import javax.swing.*;
 public class ClientGUI implements ActionListener{
 
     private Client client;
-    private JFrame UI;
+    private Frame UI;
     private Panel StatusPanel = new Panel();
     private Panel ChatPanel = new Panel();
     private Panel MessagePanel = new Panel();
@@ -13,7 +13,6 @@ public class ClientGUI implements ActionListener{
 
     private Label Username = new Label();
     private Label Connection = new Label();
-    private Button ToggleLists = new Button("Zeige Raeume");
     private Button Send = new Button("Senden");
     private List Chat = new List();
     private List Rooms = new List();
@@ -47,12 +46,17 @@ public class ClientGUI implements ActionListener{
         RoomsTab.add("Raeume", Rooms);
         RoomsTab.add("Nutzer", Users);
 
-        UI = new JFrame("Client-Chat");
+        UI = new Frame("Client-Chat");
         UI.setLayout(new BorderLayout(40, 40));
         UI.add("East", RoomsTab);
         UI.add("North", StatusPanel);
         UI.add("Center", ChatPanel);
-    
+
+        UI.setBackground(Color.lightGray);              //Colors
+        StatusPanel.setBackground(Color.lightGray);
+        ChatPanel.setBackground(Color.lightGray);
+        MessagePanel.setBackground(Color.lightGray);
+
         UI.setSize(1000, 800);
         UI.setVisible(true);
     }
@@ -79,8 +83,6 @@ public class ClientGUI implements ActionListener{
 
         Rooms.addActionListener(this);
 
-        ToggleLists.addActionListener(this);
-
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -97,13 +99,6 @@ public class ClientGUI implements ActionListener{
         }
         else if (ev.getSource() == Rooms) {
             client.out.sendMessage(".changeRoomTo" + ev.getActionCommand());
-        }
-        else if (ev.getSource() == ToggleLists) {
-            if (ToggleLists.getLabel().equals("Zeige Nutzer")) {
-                ToggleLists.setLabel("Zeige Raeume");
-            } else {
-                ToggleLists.setLabel("Zeige Nutzer");
-            }          
         }
     }
         
