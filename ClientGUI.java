@@ -96,8 +96,12 @@ public class ClientGUI implements ActionListener{
         UI.addWindowListener( new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                client.out.writer.println(".quit");
-                client.out.writer.flush();
+                if (client.out == null) {
+                    System.exit(0);
+                } else {
+                    client.out.writer.println(".quit");
+                    client.out.writer.flush();
+                }
             }
         } );
 
@@ -136,13 +140,13 @@ public class ClientGUI implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource() == Send) {             //sende Texteingabe über OutputThread
+        if (ev.getSource() == Send && client.out != null) {             //sende Texteingabe über OutputThread
             client.out.sendMessage(Message.getText());
             Chat.add(Message.getText());
             Message.setText("");
         }
 
-        else if (ev.getSource() == Message) {
+        else if (ev.getSource() == Message && client.out != null) {
             client.out.sendMessage(Message.getText());
             Chat.add(Message.getText());
             Message.setText("");
@@ -154,9 +158,9 @@ public class ClientGUI implements ActionListener{
             if(client.isLoggedIn) NewUsername.setVisible(true);       
         } else if (ev.getActionCommand() == "neues Passwort") {
             if(client.isLoggedIn) NewPassword.setVisible(true);
-        } else if (ev.getSource() == NewUsernameText || ev.getSource() == NewUsernameApply) {
+        } else if ((ev.getSource() == NewUsernameText || ev.getSource() == NewUsernameApply) && client.out != null) {
         client.out.sendMessage(".changeUsername" + NewUsernameText.getText());
-        } else if (ev.getSource() == NewPasswordText || ev.getSource() == NewPasswordApply) {
+        } else if ((ev.getSource() == NewPasswordText || ev.getSource() == NewPasswordApply)&& client.out != null) {
             client.out.sendMessage(".changePassword" + NewPasswordText.getText());
             NewPassword.setVisible(false);
         }
