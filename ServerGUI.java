@@ -189,7 +189,6 @@ public class ServerGUI implements ActionListener{
                                         st.room.userInRoom.remove(server.getUser(command));
                                         st.sendMessageToClient("[Server]: Sie werden gebannt!");
                                         st.sendMessageToClient("[Server]: Sie werden ausgeloggt!");
-                                    server.getUser(command).ban();
                                     server.setUserOffline(command);
                                     st.quit();
                                     }

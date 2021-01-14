@@ -131,9 +131,7 @@ public class ClientGUI implements ActionListener{
         Send.addActionListener(this);
         Message.addActionListener(this);
         Rooms.addActionListener(this);
-
         Options.addActionListener(this);
-
         NewUsernameText.addActionListener(this);
         NewUsernameApply.addActionListener(this);
         NewPasswordText.addActionListener(this);
@@ -147,7 +145,6 @@ public class ClientGUI implements ActionListener{
             Chat.add(Message.getText());
             Message.setText("");
         }
-
         else if (ev.getSource() == Message && client.out != null) {
             client.out.sendMessage(Message.getText());
             Chat.add(Message.getText());
@@ -193,10 +190,6 @@ public class ClientGUI implements ActionListener{
         for (int i = 1; i < RoomList.length; ++i) {
             Rooms.add(RoomList[i]);
         }
-    }
-
-    public boolean isNewUsernameVisible () {
-        return NewUsername.isVisible();
     }
 
     public void setNewUsernameInvisible() {

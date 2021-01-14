@@ -55,7 +55,7 @@ public class ServerThread extends Thread {
 				String newPassword = message.substring(15, message.length());
 				server.changePassword(username, newPassword);
     			sendMessageToClient("[Server]: Sie haben ihr Passwort geaendert!");
-    	} else if(message.startsWith(".changeUsername")) {											//Benutzernamen aendern
+    	} else if(message.startsWith(".changeUsername")) {										//Benutzernamen aendern
 			String newUsername = message.substring(15, message.length());
 			if (server.getUser(newUsername) != null) {
 				sendMessageToClient("[Server]: Der Benutzername existiert bereits!");
