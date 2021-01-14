@@ -5,29 +5,31 @@ import javax.swing.*;
 public class ClientGUI implements ActionListener{
 
     private Client client;
+
     private Frame UI;
     private Panel StatusPanel = new Panel();
     private Panel ChatPanel = new Panel();
     private Panel MessagePanel = new Panel();
     private JTabbedPane RoomsTab = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT );
 
-    private Label Username = new Label();
+    private Label Username = new Label();                   //Info oben im Client
     private Label Connection = new Label();
+
     private Button Send = new Button("Senden");
     private List Chat = new List();
     private List Rooms = new List();
     private List Users = new List();
     private TextField Message = new TextField(256);
 
-    private Menu Options = new Menu("Optionen");
+    private Menu Options = new Menu("Optionen");            //Optionen Namen, Passwort aendern
     private MenuBar Bar = new MenuBar();
 
-    private Frame NewUsername = new Frame("Benutzernamen aendern");
+    private Frame NewUsername = new Frame("Benutzernamen aendern");         //Namen aendern + Error falls bereits vorhanden
     private Label NewUsernameError = new Label("");
     private TextField NewUsernameText = new TextField(32);
     private Button NewUsernameApply = new Button("Aendern");
 
-    private Frame NewPassword = new Frame("Passwort aendern");
+    private Frame NewPassword = new Frame("Passwort aendern");              //Passwort aendern
     private TextField NewPasswordText = new TextField(32);
     private Button NewPasswordApply = new Button("Aendern");
     
