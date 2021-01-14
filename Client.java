@@ -19,10 +19,11 @@ public class Client {
     }
 
     public Client(String host, int port){
+        UI = new ClientGUI(this);
+
     	try{
             socket = new Socket(host, port);
             System.out.println("Mit Server verbunden");
-            UI = new ClientGUI(this);
             UI.setStatusConnection();
             
             out = new OutputThread(socket, this);
@@ -30,8 +31,10 @@ public class Client {
             out.start();
             in.start();
         } catch(UnknownHostException e){
+            UI.postMessage("Verbindung zum Server fehlgeschlagen. Bitte schliessen Sie das Programm und versuchen Sie es später erneut!");
             e.printStackTrace();
         } catch(IOException e){
+            UI.postMessage("Verbindung zum Server fehlgeschlagen. Bitte schliessen Sie das Programm und versuchen Sie es später erneut!");
             e.printStackTrace();
         }
     }

@@ -85,10 +85,22 @@ public class ServerGUI implements ActionListener{
             }
         });
 
+        RoomManager.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent we) {
+                RoomCommand.requestFocusInWindow();
+            }
+        });
+
         UserManager.addWindowListener( new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent ev) {
                 UserManager.setVisible(false);
+            }
+        });
+
+        UserManager.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent we) {
+                UserCommand.requestFocusInWindow();
             }
         });
 
