@@ -60,6 +60,10 @@ public class InputThread extends Thread	{
 				else if (message.equals("[Server]: Sie haben ihren Benutzernamen geaendert!")) {
 					client.UI.setNewUsernameInvisible();
 				}
+				else if (message.startsWith("Raum wurde umbenannt in ")) {
+					client.room = message.substring(24, message.length());
+					client.UI.setStatusUsername();
+				}
 				else {
 					client.UI.postMessage(message);
 				}
