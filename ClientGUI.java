@@ -32,6 +32,13 @@ public class ClientGUI implements ActionListener{
     private Frame NewPassword = new Frame("Passwort aendern");              //Passwort aendern
     private TextField NewPasswordText = new TextField(32);
     private Button NewPasswordApply = new Button("Aendern");
+
+    private Frame privateChat = new Frame("Direkter Chat");
+    private Label chatPartner = new Label("");
+    private Button sendDirect = new Button("Senden");
+    private TextField writeDirect = new TextField(256);
+    private List directChat = new List();
+    private Panel directPanel = new Panel();
     
     public ClientGUI (Client client) {
         this.client = client;
@@ -41,6 +48,15 @@ public class ClientGUI implements ActionListener{
     }
 
     private void initComponents () {
+
+        privateChat.setLayout(new BorderLayout());
+        privateChat.setSize(750, 600);
+            directPanel.setLayout(new BorderLayout());
+            directPanel.add("Center", writeDirect);
+            directPanel.add("East", sendDirect);
+        privateChat.add("North", chatPartner);
+        privateChat.add("Center", directChat);
+        privateChat.add("South", directPanel);
 
         NewUsername.setLayout(new FlowLayout(FlowLayout.CENTER));
         NewUsername.setSize(550, 150);
@@ -128,6 +144,13 @@ public class ClientGUI implements ActionListener{
             }
         });
 
+        privateChat.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                client.out.sendMessage(".closeDirectChat");
+                exitDirectChat();
+            }
+        });
+
         Send.addActionListener(this);
         Message.addActionListener(this);
         Rooms.addActionListener(this);
@@ -136,6 +159,9 @@ public class ClientGUI implements ActionListener{
         NewUsernameApply.addActionListener(this);
         NewPasswordText.addActionListener(this);
         NewPasswordApply.addActionListener(this);
+        Users.addActionListener(this);
+        writeDirect.addActionListener(this);
+        sendDirect.addActionListener(this);
 
     }
 
@@ -162,6 +188,15 @@ public class ClientGUI implements ActionListener{
         } else if ((ev.getSource() == NewPasswordText || ev.getSource() == NewPasswordApply)&& client.out != null) {
             client.out.sendMessage(".changePassword" + NewPasswordText.getText());
             NewPassword.setVisible(false);
+        } else if (ev.getSource() == Users) {
+            if(!privateChat.isVisible()){
+                privateChat.setVisible(true);
+                client.out.sendMessage(".chatWith" + Users.getSelectedItem().split(" ")[0]);
+            }
+        } else if (ev.getSource() == writeDirect || ev.getSource() == sendDirect) {
+            client.out.sendPrivateMessage(writeDirect.getText());
+            directChat.add(writeDirect.getText());
+            writeDirect.setText("");
         }
     }
         
@@ -200,5 +235,20 @@ public class ClientGUI implements ActionListener{
 
     public void setNewUsernameError() {
         NewUsernameError.setText("Dieser Benutzername ist bereits vergeben!");
+    }
+
+    public void postDirectMessage(String message){
+        directChat.add(message);
+    }
+
+    public void exitDirectChat(){
+        directChat.removeAll();
+        writeDirect.setText("");
+        privateChat.setVisible(false);
+    }
+
+    public void setChatPartner(String username) {
+        chatPartner.setText("Privater Chat mit " + username);
+        privateChat.setVisible(true);
     }
 }

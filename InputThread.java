@@ -52,6 +52,7 @@ public class InputThread extends Thread	{
 				}
 				else if(message.startsWith("[Server]: Raeume ")) {
 					client.UI.setRooms(message.split(" :: "));
+					client.UI.setStatusUsername();
 				}
 				else if(message.equals("[Server]: Der Benutzername existiert bereits!")) {
 					client.UI.setNewUsernameError();
@@ -59,6 +60,18 @@ public class InputThread extends Thread	{
 				}
 				else if (message.equals("[Server]: Sie haben ihren Benutzernamen geaendert!")) {
 					client.UI.setNewUsernameInvisible();
+				}
+				else if (message.startsWith(".direct")){
+					client.UI.postDirectMessage(message.substring(7, message.length()));
+				}
+				else if(message.startsWith(".closeDirectChat")){
+					client.UI.exitDirectChat();
+				}
+				else if(message.startsWith(".privateChatBuilt")){
+					client.UI.setChatPartner(message.substring(17, message.length()));
+				}
+				else if (message.equals(".privateChatFailed")){
+					client.UI.exitDirectChat();
 				}
 				else {
 					client.UI.postMessage(message);

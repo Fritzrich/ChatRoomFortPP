@@ -22,6 +22,11 @@ public class OutputThread extends Thread {
 			writer.flush();
 	}
 
+	public void sendPrivateMessage(String message){
+			writer.println(".direct" + message);
+			writer.flush();
+	}
+
 	public void run() {
 		try {
 			OutputStream output = socket.getOutputStream();

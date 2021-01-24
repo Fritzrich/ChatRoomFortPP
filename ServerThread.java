@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class ServerThread extends Thread {
 
@@ -8,8 +9,10 @@ public class ServerThread extends Thread {
     PrintWriter writer;
     BufferedReader reader;
     boolean shouldRun = true;
-    String username;
-    Room room;
+	String username;
+	Room room;
+	PrivateRoom pRoom = null;
+	String chatBuddyName;
     
     public ServerThread(Socket client, Server server) {
         this.client = client;
@@ -37,7 +40,11 @@ public class ServerThread extends Thread {
         		serverThread.sendMessageToClient(message);
         	}
         }
-    }
+	}
+	
+	public void sendMessageToChatPartner(String message) {
+		server.getThread(chatBuddyName).sendMessageToClient(message);
+	}
     
     public void serverShutdown() {
     	sendMessageToAllClients("[Server]: Der Server wird heruntergefahren!\nGood Bye!");
@@ -73,7 +80,31 @@ public class ServerThread extends Thread {
 			server.addUserToRoom(server.getRoom(message), username);
 			sendMessageToClient("[Server]: Sie sind eingeloggt als " + username + " in Raum " + room.getRoomName());
     		sendMessageToClient("Raum gewechselt zu"+ message);
-    	} 
+    	} else if(message.startsWith(".closeDirectChat")) {
+			sendMessageToChatPartner(".closeDirectChat");
+			pRoom = null;
+			server.getThread(chatBuddyName).pRoom = this.pRoom;
+			server.getThread(chatBuddyName).chatBuddyName = null;
+			chatBuddyName = null;
+		} else if(message.startsWith(".chatWith")) {
+			String tempchatBuddyName = message.substring(9, message.length());
+			if(server.getThread(tempchatBuddyName).pRoom == null && !(tempchatBuddyName.equals(username))) {
+			chatBuddyName = tempchatBuddyName;
+			pRoom = new PrivateRoom(server, username + chatBuddyName, server.getUser(username), server.getUser(chatBuddyName));
+			server.getThread(chatBuddyName).pRoom = this.pRoom;
+			server.getThread(chatBuddyName).chatBuddyName = this.username;
+			sendMessageToClient(".privateChatBuilt" + chatBuddyName);
+			sendMessageToChatPartner(".privateChatBuilt" + username);
+			} else {
+				sendMessageToClient(".privateChatFailed");
+			} 
+			if(tempchatBuddyName.equals(username)) {
+				sendMessageToClient(".privateChatFailed");
+			}
+		} else if(message.startsWith(".direct")){
+			message = ".direct" + "[" + username + "]: " + message.substring(7, message.length());
+			sendMessageToChatPartner(message);
+		}
     }
     
     public void quit() {
