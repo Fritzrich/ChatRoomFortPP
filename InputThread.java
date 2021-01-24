@@ -52,6 +52,7 @@ public class InputThread extends Thread	{
 				}
 				else if(message.startsWith("[Server]: Raeume ")) {
 					client.UI.setRooms(message.split(" :: "));
+					client.UI.setStatusUsername();
 				}
 				else if(message.equals("[Server]: Der Benutzername existiert bereits!")) {
 					client.UI.setNewUsernameError();
@@ -60,14 +61,21 @@ public class InputThread extends Thread	{
 				else if (message.equals("[Server]: Sie haben ihren Benutzernamen geaendert!")) {
 					client.UI.setNewUsernameInvisible();
 				}
-				else if (message.startsWith("[Server]: Raum ")) {
-					String[] messageParts = message.split(" ");
-					System.out.println("-" + client.room + " " + messageParts[2] + "-");
-					if (messageParts[2] == client.room) {
-						client.room = messageParts[5];
-						client.UI.setStatusUsername();
-						System.out.println(messageParts[2] + messageParts[5]);
-					}
+				else if (message.startsWith(".direct")){
+					client.UI.postDirectMessage(message.substring(7, message.length()));
+				}
+				else if(message.startsWith(".closeDirectChat")){
+					client.UI.exitDirectChat();
+				}
+				else if(message.startsWith(".privateChatBuilt")){
+					client.UI.setChatPartner(message.substring(17, message.length()));
+				}
+				else if (message.equals(".privateChatFailed")){
+					client.UI.exitDirectChat();
+				}
+				else if (message.startsWith("Raum wurde umbenannt in ")) {
+					client.room = message.substring(24, message.length());
+					client.UI.setStatusUsername();
 				}
 				else {
 					client.UI.postMessage(message);

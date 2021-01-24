@@ -19,6 +19,7 @@ public class Server extends Thread{
     boolean shouldRun = true;
     ServerSocket serverSocket;
     ArrayList<Room> allRooms = new ArrayList<Room>();
+    ArrayList<PrivateRoom> allPrivateRooms = new ArrayList<PrivateRoom>();
     File file = new File("Serverlog.txt");
     File fileUserData = new File("ServerUserData.txt");
 
@@ -288,5 +289,14 @@ public class Server extends Thread{
 			}
 		}
 		UI.addUser("+ Nutzer entbannen");
-	}
+    }
+    
+    public ServerThread getThread(String username) {
+        for(ServerThread st : connections){
+            if(st.username.equals(username)){
+                return st;
+            }
+        }
+        return null;
+    }
 }
