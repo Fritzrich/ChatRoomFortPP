@@ -69,7 +69,7 @@ public class Server extends Thread{
 		}
     }
     
-    public void registerToFile(String username, String password) {          //neuer Nutzer wird in Datei geschrieben
+    public void registerToFile(String username, String password) {
     	try {
     		BufferedWriter writer = new BufferedWriter(new FileWriter(fileUserData, true));
     		writer.write(username + "\n" + password + "\n" + "false\n");
@@ -92,7 +92,7 @@ public class Server extends Thread{
     	}
     }
     
-    public void updateServerUserData() {            //Bei Server-Herunterfahren wird File geupdated
+    public void updateServerUserData() {
     	try {
 			BufferedWriter fw = new BufferedWriter( new FileWriter(fileUserData, false));
 			String updatedText = "";
@@ -135,6 +135,7 @@ public class Server extends Thread{
                 temproom.setRoomName(roomName);
             }
         }
+        getOnlineRooms();
     }
     
     void deleteRoom(String roomName) {
@@ -253,8 +254,8 @@ public class Server extends Thread{
         }
     	return false;
     }
-
-    public void getOnlineUsers() {              //CLient-Seite dynamisches Updaten
+    
+    public void getOnlineUsers() {
 		for (ServerThread st : connections) {
 			st.sendMessageToClient("[Server]: Es sind " + st.room.userInRoom());
 		}
@@ -272,7 +273,7 @@ public class Server extends Thread{
 		setUserAndRooms();
 	}
 	
-	public void setUserAndRooms() {         //Server-Seite dynamisches Updaten von Raum/User-Liste
+	public void setUserAndRooms() {
 		UI.clearRooms();
 		UI.clearUsers();
 

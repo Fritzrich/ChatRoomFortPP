@@ -143,6 +143,9 @@ public class ServerGUI implements ActionListener{
                     server.log("[Server]: Raum " + selectedRoom + " wurde umbenannt zu" + command);
                     server.getRoom(selectedRoom).setRoomName(command);
                     server.getOnlineRooms();
+                    for (ServerThread st : server.connections){
+                        st.sendMessageToClient("[Server]: Raum " + selectedRoom + " umbenannt zu " + command);
+                    }
                     break;
                 case "Raum loeschen":
                     if (command != "public") {
