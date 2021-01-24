@@ -72,6 +72,7 @@ public class InputThread extends Thread	{
 				}
 				else if (message.equals(".privateChatFailed")){
 					client.UI.exitDirectChat();
+				}
 				else if (message.startsWith("Raum wurde umbenannt in ")) {
 					client.room = message.substring(24, message.length());
 					client.UI.setStatusUsername();
