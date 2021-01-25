@@ -49,12 +49,13 @@ public class ClientGUI implements ActionListener{
 
     private void initComponents () {
 
-        privateChat.setLayout(new BorderLayout());
+        privateChat.setLayout(new BorderLayout(40, 40));
         privateChat.setSize(750, 600);
-            directPanel.setLayout(new BorderLayout());
+            directPanel.setLayout(new BorderLayout(20, 0));
             directPanel.add("Center", writeDirect);
             directPanel.add("East", sendDirect);
         privateChat.add("North", chatPartner);
+            chatPartner.setAlignment(Label.CENTER);
         privateChat.add("Center", directChat);
         privateChat.add("South", directPanel);
 
@@ -104,6 +105,8 @@ public class ClientGUI implements ActionListener{
         StatusPanel.setBackground(Color.lightGray);
         ChatPanel.setBackground(Color.lightGray);
         MessagePanel.setBackground(Color.lightGray);
+        privateChat.setBackground(Color.lightGray);
+
 
         UI.setSize(1000, 800);
         UI.setVisible(true);
@@ -148,6 +151,12 @@ public class ClientGUI implements ActionListener{
             public void windowClosing(WindowEvent we) {
                 client.out.sendMessage(".closeDirectChat");
                 exitDirectChat();
+            }
+        });
+
+        privateChat.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent we) {
+                writeDirect.requestFocusInWindow();
             }
         });
 

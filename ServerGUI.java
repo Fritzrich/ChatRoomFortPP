@@ -139,16 +139,18 @@ public class ServerGUI implements ActionListener{
                     server.getOnlineRooms();
                     server.log("[Server]: Raum " + command + " wurde erstellt!");
                     break;
-                case "Raum umbenennen in":                                          
-                    server.log("[Server]: Raum " + selectedRoom + " wurde umbenannt zu" + command);
-                    server.getRoom(selectedRoom).setRoomName(command);
-                    server.getOnlineRooms();
-                    for (ServerThread st : server.connections){
-                        st.sendMessageToClient("[Server]: Raum " + selectedRoom + " umbenannt zu " + command);
+                case "Raum umbenennen in": 
+                    if (!(command.startsWith("public"))) {                               
+                        server.log("[Server]: Raum " + selectedRoom + " wurde umbenannt zu" + command);
+                        server.getRoom(selectedRoom).setRoomName(command);
+                        server.getOnlineRooms();
+                        for (ServerThread st : server.connections){
+                            st.sendMessageToClient("[Server]: Raum " + selectedRoom + " umbenannt zu " + command);
+                        }
                     }
                     break;
                 case "Raum loeschen":
-                    if (command != "public") {
+                    if (!(command.startsWith("public"))) {
                         server.deleteRoom(command);
                         server.getOnlineRooms();
                     }
