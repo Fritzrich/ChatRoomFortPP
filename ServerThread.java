@@ -167,7 +167,9 @@ public class ServerThread extends Thread {
 				}
 				String message = reader.readLine();
 				String finalMessage = "[" + username + "]: " + message;
-				server.log("[" + room.getRoomName() + "] " + finalMessage);
+				if(!(message.startsWith(".direct"))){
+					server.log("[" + room.getRoomName() + "] " + finalMessage);
+				}
 				if(message.startsWith(".")){ 									//Filtere Kommando-Anfragen
 					handleCommand(message);
 				} else {

@@ -71,8 +71,8 @@ public class ServerGUI implements ActionListener{
             public void windowClosing(WindowEvent ev) {
                 for (ServerThread serverThread : server.connections) {
                     serverThread.serverShutdown();
-                    server.log("[Server]: Server wurde heruntergefahren!");
                 }
+                server.log("[Server]: Server wurde heruntergefahren!");
                 server.updateServerUserData();
                 server.shouldRun = false;
             }
@@ -140,7 +140,7 @@ public class ServerGUI implements ActionListener{
                     server.log("[Server]: Raum " + command + " wurde erstellt!");
                     break;
                 case "Raum umbenennen in": 
-                    if (!(command.startsWith("public"))) {                               
+                    if (!(selectedRoom.startsWith("public"))) {                               
                         server.log("[Server]: Raum " + selectedRoom + " wurde umbenannt zu" + command);
                         server.getRoom(selectedRoom).setRoomName(command);
                         server.getOnlineRooms();

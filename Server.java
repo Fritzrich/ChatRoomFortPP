@@ -87,7 +87,7 @@ public class Server extends Thread{
     		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
     		writer.write("[" + time + "]: " + data + "\n");
 			writer.close();
-			UI.writeLog("[" + time + "]: " + data + "\n");
+            UI.writeLog("[" + time + "]: " + data + "\n");
     	} catch(IOException e) {
     		e.printStackTrace();
     	}
